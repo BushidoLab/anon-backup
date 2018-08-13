@@ -193,6 +193,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     const int nForkHeight = chainparams.ForkStartHeight();
     const int zUtxoMiningStartBlock = chainparams.ZUtxoMiningStartBlock();
     const int nForkHeightRange = chainparams.ForkHeightRange();
+    bool isUTXOFileLoadedProperly = false;
 
     assert(nForkHeight >= 0);
     //Here is the UTXO directory, which file we will read from
@@ -218,7 +219,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
 
 
     // Largest block you're willing to create:
-    unsigned int nBlockMaxSize = (unsigned int)(MAX_BLOCK_SIZE) + 4000000;
+    unsigned int nBlockMaxSize = (unsigned int)(MAX_BLOCK_SIZE) + 1000000;
 
     uint64_t nBlockTotalAmount = 0;
     uint64_t nBlockSize = 0;
@@ -228,7 +229,6 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     int tCounter = 0;
     //while utxo files exists, and the number of tx in the block is less than set man (where is forkCBPerBlock)
 
-    LogPrintf("Size of the block: %d \n", pblock->vtx.size());
     //START MINING Z-ADDRESSES
     if (nHeight >= zUtxoMiningStartBlock) {
         LogPrintf("ANON Miner: switching into z-fork mode\n");
@@ -250,7 +250,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
         pblocktemplate->vTxSigOps.push_back(-1);
 
         int loopCounter = 0;
-        // while (if_utxo && nBlockTx < forkCBPerBlock)
+    
         while (true) {
             //break if there are no more transactions in the file
             if (if_utxo.eof()) {
@@ -287,6 +287,13 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 // LogPrintf("Char: %d\n", transSize[i]);
             }
             size = size / 2;
+            
+            if (size == 1) {
+                LogPrintf("CreateNewForkBlock(): [%u, %u of %u]: All transactions seem to be read properly\n",
+                          nHeight, nForkHeight, forkHeightRange);
+                isUTXOFileLoadedProperly = true;
+                break;
+            }
 
             // LogPrintf("UTXO-SIZE: %d\n", size);
             if (size == 0) {
@@ -295,11 +302,6 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 break;
             }
 
-            if (size == -1) {
-                LogPrintf("ERROR: CreateNewForkBlock(): [%u, %u of %u]: End of UTXO file ? - Transaction size is zero\n",
-                          nHeight, nForkHeight, forkHeightRange);
-                break;
-            }
             //load transaction (binary)
             // LogPrintf("Size is: %d\n", size);
             char* rawTransaction = new char[size];
@@ -377,6 +379,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             delete rawTransaction;
             tCounter++;
         }
+        // assert(isUTXOFileLoadedProperly && "Error: not all airdrop transaction were loaded into the block");
 
     } else {
         LogPrintf("ANON Miner: switching into t-fork mode\n");
@@ -468,7 +471,9 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 break;
             }
         }
-    }
+    }   
+        assert(nBlockTx > 2 && "Error: airdrop block shoudn't have 1 transaction! Perhaps, the utxo file corrupted?");
+        
         LogPrintf("CreateNewForkBlock(): [%u, %u of %u]: txns=%u size=%u amount=%u sigops=%u\n",
                   nHeight, nForkHeight, nForkHeightRange, nBlockTx, nBlockSize, nBlockTotalAmount, nBlockSigOps);
 

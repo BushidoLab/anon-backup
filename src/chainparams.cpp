@@ -63,8 +63,8 @@ public:
         nDefaultPort = 33130;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        const size_t N = 144, K = 5;
-        //const size_t N = 200, K = 9;
+        // const size_t N = 144, K = 5;
+        const size_t N = 200, K = 9;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
@@ -103,8 +103,6 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // TODO: setup a DNSSeed
-        //vSeeds.push_back(CDNSSeedData("[INSERT].org", "dnsseed.[INSERT].org"));
-        //vSeeds.push_back(CDNSSeedData("[INSERT].co", "dnsseed.[INSERT].co"));
 
         // guarantees the first 2 characters, when base58 encoded, are "An"
         base58Prefixes[PUBKEY_ADDRESS]     = {0x05,0x82};
@@ -207,8 +205,6 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        //vSeeds.push_back(CDNSSeedData("[INSERT].org", "dnsseed.testnet.[INSERT].org"));
-        //vSeeds.push_back(CDNSSeedData("[INSERT].co", "dnsseed.testnet1.[INSERT].co"));
 
         // guarantees the first 2 characters, when base58 encoded, are "tA"
         base58Prefixes[PUBKEY_ADDRESS]     = {0x1C,0xCE};
@@ -242,8 +238,8 @@ public:
         };
 
         nForkStartHeight = 7;
-        nForkHeightRange = 7988;
-        zUtxoMiningStartBlock = 1674;
+        nForkHeightRange = 1724;
+        zUtxoMiningStartBlock = 8;
     }
 };
 static CTestNetParams testNetParams;

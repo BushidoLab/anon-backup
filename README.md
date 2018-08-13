@@ -17,9 +17,6 @@ Zk-snarks
 
 Equihash <144,5>
 
-2:1 Airdrop to ZCL holders & 1:1 Aidrop to BTC holders
-
-
 
 
 Build
@@ -37,7 +34,7 @@ sudo apt-get install \
 Build:
 ```{r, engine='bash'}
 # Checkout
-git clone [INSERT_GITHUB_REPO_URL]
+git clone https://github.com/anonymousbitcoin/anon.git
 cd anon
 # Build
 ./anonutil/build.sh -j$(nproc)
@@ -57,14 +54,23 @@ Add following lines to `anon.conf` and be sure to change the rpcpassword:
 rpcuser=anonrpc
 rpcpassword=set-a-password
 rpcallowip=127.0.0.1
+txindex=1
 #addnode=dnsseed.anon.org
 #addnode=dnsseed.anon.co
+addnode=50.116.31.254
+addnode=45.56.70.130
+addnode=69.164.196.203
+addnode=23.239.30.210
+addnode=45.79.6.196
+addnode=66.228.52.134
+addnode=72.14.185.163
+addnode=198.58.124.152
 ```
 
 
 Run:
 ```
-./src/anond
+./src/anond -testnet
 ```
 
 ### Windows
@@ -152,7 +158,7 @@ Install:
 # fetch key
 ./anonutil/fetch-params.sh
 # Run
-./src/anond
+./src/anond -tesnet
 ```
 
 ### Additional notes
