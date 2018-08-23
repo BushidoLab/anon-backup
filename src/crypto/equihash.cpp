@@ -805,6 +805,7 @@ template bool Equihash<200,9>::OptimisedSolve(const eh_HashState& base_state,
 #endif
 template bool Equihash<200,9>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
+
 // Explicit instantiations for Equihash<96,5>
 template int Equihash<96,5>::InitialiseState(eh_HashState& base_state);
 #ifdef ENABLE_MINING

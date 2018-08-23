@@ -223,10 +223,10 @@ inline bool EhBasicSolve(unsigned int n, unsigned int k, const eh_HashState& bas
 {
     if (n == 96 && k == 3) {
         return Eh96_3.BasicSolve(base_state, validBlock, cancelled);
-    } else if (n == 200 && k == 9) {
-        return Eh200_9.BasicSolve(base_state, validBlock, cancelled);
     } else if (n == 96 && k == 5) {
         return Eh96_5.BasicSolve(base_state, validBlock, cancelled);
+    } else if (n == 200 && k == 9) {
+        return Eh200_9.BasicSolve(base_state, validBlock, cancelled);
     } else if (n == 48 && k == 5) {
         return Eh48_5.BasicSolve(base_state, validBlock, cancelled);
     } else if (n == 144 && k == 5) {
