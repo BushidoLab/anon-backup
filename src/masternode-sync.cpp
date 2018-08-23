@@ -167,8 +167,6 @@ std::string CMasternodeSync::GetAssetName()
     {
     case (MASTERNODE_SYNC_INITIAL):
         return "MASTERNODE_SYNC_INITIAL";
-    case (MASTERNODE_SYNC_SPORKS):
-        return "MASTERNODE_SYNC_SPORKS";
     case (MASTERNODE_SYNC_LIST):
         return "MASTERNODE_SYNC_LIST";
     case (MASTERNODE_SYNC_MNW):
@@ -234,8 +232,6 @@ std::string CMasternodeSync::GetSyncStatus()
     {
     case MASTERNODE_SYNC_INITIAL:
         return _("Synchronization pending...");
-    case MASTERNODE_SYNC_SPORKS:
-        return _("Synchronizing sporks...");
     case MASTERNODE_SYNC_LIST:
         return _("Synchronizing masternodes...");
     case MASTERNODE_SYNC_MNW:
@@ -337,14 +333,14 @@ void CMasternodeSync::ProcessTick()
     //uiInterface.NotifyAdditionalDataSyncProgressChanged(nSyncProgress);
 
     // sporks synced but blockchain is not, wait until we're almost at a recent block to continue
-    if (Params().NetworkIDString() != "regtest" &&
-        !IsBlockchainSynced() && nRequestedMasternodeAssets > MASTERNODE_SYNC_SPORKS) {
-        LogPrintf("CMasternodeSync::ProcessTick -- nTick %d nRequestedMasternodeAssets %d nRequestedMasternodeAttempt %d -- blockchain is not synced yet\n", nTick, nRequestedMasternodeAssets, nRequestedMasternodeAttempt);
-        nTimeLastMasternodeList = GetTime();
-        nTimeLastPaymentVote = GetTime();
-        nTimeLastGovernanceItem = GetTime();
-        return;
-    }
+    // if (Params().NetworkIDString() != "regtest" &&
+    //     !IsBlockchainSynced() && nRequestedMasternodeAssets > MASTERNODE_SYNC_SPORKS) {
+    //     LogPrintf("CMasternodeSync::ProcessTick -- nTick %d nRequestedMasternodeAssets %d nRequestedMasternodeAttempt %d -- blockchain is not synced yet\n", nTick, nRequestedMasternodeAssets, nRequestedMasternodeAttempt);
+    //     nTimeLastMasternodeList = GetTime();
+    //     nTimeLastPaymentVote = GetTime();
+    //     nTimeLastGovernanceItem = GetTime();
+    //     return;
+    // }
 
     // Removing this because we will not be implementing SPORK feature
     // if (nRequestedMasternodeAssets == MASTERNODE_SYNC_INITIAL ||
@@ -370,17 +366,13 @@ void CMasternodeSync::ProcessTick()
         {
             if (nRequestedMasternodeAttempt <= 2)
             {
-                pnode->PushMessage(NetMsgType::GETSPORKS); //get current network sporks
+                mnodeman.DsegUpdate(pnode);
             }
             else if (nRequestedMasternodeAttempt < 4)
             {
-                mnodeman.DsegUpdate(pnode);
-            }
-            else if (nRequestedMasternodeAttempt < 6)
-            {
                 int nMnCount = mnodeman.CountMasternodes();
                 pnode->PushMessage(NetMsgType::MASTERNODEPAYMENTSYNC, nMnCount); //sync payment votes
-                // SendGovernanceSyncRequest(pnode);
+                SendGovernanceSyncRequest(pnode);
             }
             else
             {

@@ -12,12 +12,11 @@ class CMasternodeSync;
 
 static const int MASTERNODE_SYNC_FAILED = -1;
 static const int MASTERNODE_SYNC_INITIAL = 0;
-static const int MASTERNODE_SYNC_SPORKS = 1;
-static const int MASTERNODE_SYNC_LIST = 2;
-static const int MASTERNODE_SYNC_MNW = 3;
-static const int MASTERNODE_SYNC_GOVERNANCE = 4;
-static const int MASTERNODE_SYNC_GOVOBJ = 10;
-static const int MASTERNODE_SYNC_GOVOBJ_VOTE = 11;
+static const int MASTERNODE_SYNC_LIST = 1;
+static const int MASTERNODE_SYNC_MNW = 2;
+static const int MASTERNODE_SYNC_GOVERNANCE = 3;
+static const int MASTERNODE_SYNC_GOVOBJ = 4;
+static const int MASTERNODE_SYNC_GOVOBJ_VOTE = 10;
 static const int MASTERNODE_SYNC_FINISHED = 999;
 
 static const int MASTERNODE_SYNC_TICK_SECONDS = 6;

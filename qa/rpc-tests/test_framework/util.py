@@ -38,6 +38,10 @@ def enable_mocktime():
     global MOCKTIME
     MOCKTIME = 1482971059 + (201 * 156)    
 
+def set_mocktime(t):
+    global MOCKTIME
+    MOCKTIME = t
+
 def disable_mocktime():
     global MOCKTIME
     MOCKTIME = 0
@@ -92,6 +96,20 @@ def sync_mempools(rpc_connections, wait=1):
             break
         time.sleep(wait)
 
+def sync_masternodes(rpc_connections):
+    for node in rpc_connections:
+        wait_to_sync(node)
+
+def get_mnsync_status(node):
+    result = node.mnsync("status")
+    return result['IsSynced']
+
+def wait_to_sync(node):
+    synced = False
+    while not synced:
+        synced = get_mnsync_status(node)
+        time.sleep(0.5)
+
 bitcoind_processes = {}
 
 def initialize_datadir(dirname, n):
@@ -121,12 +139,25 @@ def initialize_chain(test_dir):
     if (not os.path.isdir(os.path.join("cache","node0"))
         or not os.path.isdir(os.path.join("cache","node1"))
         or not os.path.isdir(os.path.join("cache","node2"))
-        or not os.path.isdir(os.path.join("cache","node3"))):
+        or not os.path.isdir(os.path.join("cache","node3"))
+        or not os.path.isdir(os.path.join("cache","node4"))
+        or not os.path.isdir(os.path.join("cache","node5"))
+        or not os.path.isdir(os.path.join("cache","node6"))
+        or not os.path.isdir(os.path.join("cache","node7"))
+        or not os.path.isdir(os.path.join("cache","node9"))
+        or not os.path.isdir(os.path.join("cache","node10"))
+        or not os.path.isdir(os.path.join("cache","node11"))
+        or not os.path.isdir(os.path.join("cache","node12"))
+        or not os.path.isdir(os.path.join("cache","node13"))
+        or not os.path.isdir(os.path.join("cache","node14"))
+        or not os.path.isdir(os.path.join("cache","node15"))
+
+        ):
 
         devnull = open("/dev/null", "w+")
         
         # Create cache directories, run bitcoinds:
-        for i in range(4):
+        for i in range(15):
             datadir=initialize_datadir("cache", i)
             args = [ os.getenv("ANOND", "anond"), "-keypool=1", "-datadir="+datadir, "-discover=0" ]
             if i > 0:
@@ -140,7 +171,7 @@ def initialize_chain(test_dir):
                 print( "initialize_chain: anon-cli -rpcwait getblockcount completed")
         devnull.close()
         rpcs = []
-        for i in range(4):
+        for i in range(15):
             try:
                 url = "http://rt:rt@127.0.0.1:%d"%(rpc_port(i),)
                 rpcs.append(AuthServiceProxy(url))
@@ -167,13 +198,13 @@ def initialize_chain(test_dir):
         stop_nodes(rpcs)
         wait_bitcoinds()
         disable_mocktime()
-        for i in range(4):
+        for i in range(15):
             os.remove(log_filename("cache", i, "debug.log"))
             os.remove(log_filename("cache", i, "db.log"))
             os.remove(log_filename("cache", i, "peers.dat"))
             os.remove(log_filename("cache", i, "fee_estimates.dat"))
 
-    for i in range(4):
+    for i in range(15):
         from_dir = os.path.join("cache", "node"+str(i))
         to_dir = os.path.join(test_dir,  "node"+str(i))
         shutil.copytree(from_dir, to_dir)

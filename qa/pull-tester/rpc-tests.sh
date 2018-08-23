@@ -44,7 +44,8 @@ testScripts=(
     'getblocktemplate.py'
     'bip65-cltv-p2p.py' 
     'bipdersig-p2p.py' 
-    #'p2p-masternodes.py'
+    'p2p-masternodes.py'
+    'masternodes.py'
 );
 testScriptsExt=(
     'getblocktemplate_longpoll.py'
