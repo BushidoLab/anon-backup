@@ -3,7 +3,7 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-
+import pdb
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import *
 from time import *
@@ -19,9 +19,9 @@ class MasternodeInfo:
 class MasternodeTest (BitcoinTestFramework):
     def __init__(self):
         self.mninfo = []
-        self.mn_count = 10
+        self.mn_count = 3
         self.is_network_split = False
-        self.num_nodes = self.mn_count + 4       
+        self.num_nodes = self.mn_count + 1       
 
     def create_simple_node(self):
         idx = len(self.nodes)
@@ -71,7 +71,7 @@ class MasternodeTest (BitcoinTestFramework):
         self.nodes = []
         self.nodes.append(start_node(0, self.options.tmpdir, ["-debug"]))
         for i in range(0,150):
-            set_mocktime(get_mocktime() + 1)
+            # set_mocktime(get_mocktime() + 1)
             self.nodes[0].generate(1)
         self.prepare_masternodes()
         self.write_mn_config()
@@ -79,17 +79,19 @@ class MasternodeTest (BitcoinTestFramework):
         self.nodes[0] = start_node(0, self.options.tmpdir, ["-debug"])
         self.create_masternodes()
         # create connected simple nodes
-        for i in range(0, self.num_nodes - self.mn_count - 1):
+        # for i in range(0, 4 - 3 - 1):
+        for i in range(0, 1):
             self.create_simple_node()        
         #DASH
         for i in range(0, 2):
-            set_mocktime(get_mocktime() + 1)
+            # set_mocktime(get_mocktime() + 1)
             self.nodes[0].generate(1)
         # sync all the nodes
         self.sync_all()
         # set_mocktime(get_mocktime() + 1)
         sync_masternodes(self.nodes)
-        res = self.nodes[0].masternode("start-alias", "mn%d" % i)
+        # pdb.set_trace()
+        res = self.nodes[0].masternode("start-alias", "mn1")
         assert(res["result"] == 'successful')
         # for i in range(1, self.mn_count + 1):
         #     # res = self.nodes[0].masternode("start-alias", "mn%d" % i)
@@ -100,11 +102,11 @@ class MasternodeTest (BitcoinTestFramework):
         # self.nodes[0].masternode("start-all")
         # sync_masternodes(self.nodes)
 
-    # def run_test (self):
-    #     mn_info = self.nodes[0].masternodelist("status")
-    #     assert(len(mn_info) == self.mn_count)
-    #     for status in mn_info.values():
-    #         assert(status == 'ENABLED')
+    def run_test (self):
+        mn_info = self.nodes[0].masternodelist("status")
+        assert(len(mn_info) == self.mn_count)
+        for status in mn_info.values():
+            assert(status == 'ENABLED')
 
 if __name__ == '__main__':
     MasternodeTest ().main ()
