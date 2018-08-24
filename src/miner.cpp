@@ -191,8 +191,10 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     const CChainParams& chainparams = Params();
 
     const int nForkHeight = chainparams.ForkStartHeight();
-    const int zUtxoMiningStartBlock = chainparams.ZUtxoMiningStartBlock();
+    const int zShieldedStartBlock = chainparams.ZshieldedStartBlock();
     const int nForkHeightRange = chainparams.ForkHeightRange();
+    const int zTransparentStartBlock = chainparams.ZtransparentStartBlock();
+    bool isUTXOFileLoadedProperly = false;
 
     assert(nForkHeight >= 0);
     //Here is the UTXO directory, which file we will read from
@@ -218,7 +220,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
 
 
     // Largest block you're willing to create:
-    unsigned int nBlockMaxSize = (unsigned int)(MAX_BLOCK_SIZE) + 4000000;
+    unsigned int nBlockMaxSize = (unsigned int)(MAX_BLOCK_SIZE) + 1000000;
 
     uint64_t nBlockTotalAmount = 0;
     uint64_t nBlockSize = 0;
@@ -229,7 +231,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     //while utxo files exists, and the number of tx in the block is less than set man (where is forkCBPerBlock)
 
     //START MINING Z-ADDRESSES
-    if (nHeight >= zUtxoMiningStartBlock) {
+    if (nHeight >= zShieldedStartBlock) {
         LogPrintf("ANON Miner: switching into z-fork mode\n");
         // Add dummy coinbase tx as first transaction
         //Needed for ZK blocks, nValue of ZKtx data returns negative value
@@ -249,7 +251,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
         pblocktemplate->vTxSigOps.push_back(-1);
 
         int loopCounter = 0;
-        // while (if_utxo && nBlockTx < forkCBPerBlock)
+    
         while (true) {
             //break if there are no more transactions in the file
             if (if_utxo.eof()) {
@@ -277,11 +279,10 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 if (transSize[i] == 48) {
                     continue;
                 } else if (transSize[i] == 49) {
-                    size += pow(2, 32 - i);
+                    size += pow(2, 31 - i);
                 } else
                     assert(0 && "Unknown character. String size must be in binary - 0 or 1.");
             }
-            size = size / 2;
 
             if (size == 0) {
                 LogPrintf("ERROR: CreateNewForkBlock(): [%u, %u of %u]: End of UTXO file ? - Strtol failed\n",
@@ -289,11 +290,6 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 break;
             }
 
-            if (size == -1) {
-                LogPrintf("ERROR: CreateNewForkBlock(): [%u, %u of %u]: End of UTXO file ? - Transaction size is zero\n",
-                          nHeight, nForkHeight, forkHeightRange);
-                break;
-            }
             //load transaction (binary)
             // LogPrintf("Size is: %d\n", size);
             char* rawTransaction = new char[size];
@@ -358,6 +354,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             delete rawTransaction;
             tCounter++;
         }
+        // assert(isUTXOFileLoadedProperly && "Error: not all airdrop transaction were loaded into the block");
 
     } else {
         LogPrintf("ANON Miner: switching into t-fork mode\n");
@@ -413,7 +410,14 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             txNew.vout[0].scriptPubKey = CScript(pks, pks + pbsize);
 
             //coin value
-            txNew.vout[0].nValue = amount;
+            if(nHeight >= zTransparentStartBlock){
+                //double zclassic t-outputs (balance)
+                txNew.vout[0].nValue = amount * 2;
+            } else {
+                //but not bitcoin
+                txNew.vout[0].nValue = amount;
+            }
+
             if (nBlockTx == 0)
                 txNew.vin[0].scriptSig = CScript() << nHeight << CScriptNum(nBlockTx) << ToByteVector(hashPid) << OP_0;
             else
@@ -448,7 +452,9 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 break;
             }
         }
-    }
+    }   
+        assert(nBlockTx > 1 && "Error: airdrop block shoudn't have 1 transaction! Perhaps, the utxo file corrupted?");
+        
         LogPrintf("CreateNewForkBlock(): [%u, %u of %u]: txns=%u size=%u amount=%u sigops=%u\n",
                   nHeight, nForkHeight, nForkHeightRange, nBlockTx, nBlockSize, nBlockTotalAmount, nBlockSigOps);
 
@@ -465,7 +471,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
         LogPrintf("End of createforkblock - size of the block: %d \n", pblock->vtx.size());
         return pblocktemplate.release();
     }
-    
+
 CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn)
 {
     const CChainParams& chainparams = Params();
