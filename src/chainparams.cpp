@@ -207,12 +207,6 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("anon1", "50.116.31.254"));
-        vSeeds.push_back(CDNSSeedData("anon2", "45.56.70.130"));
-        vSeeds.push_back(CDNSSeedData("anon3", "69.164.196.203"));
-        vSeeds.push_back(CDNSSeedData("anon4", "23.239.30.210"));
-        vSeeds.push_back(CDNSSeedData("anon5", "45.79.6.196"));
-        vSeeds.push_back(CDNSSeedData("anon6", "66.228.52.134"));
 
         // guarantees the first 2 characters, when base58 encoded, are "tA"
         base58Prefixes[PUBKEY_ADDRESS]     = {0x1C,0xCE};
@@ -267,7 +261,7 @@ public:
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 1000;
-        consensus.powLimit = uint256S("0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f");
+        consensus.powLimit = uint256S("0x0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f");
         consensus.prePowLimit = consensus.powLimit;
         consensus.nPowMaxAdjustDown = 0; // Turn off adjustment down
         consensus.nPowMaxAdjustUp = 0; // Turn off adjustment up
@@ -289,13 +283,13 @@ public:
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
-        genesis.nTime = 1482971059;
+        genesis.nTime = 1532704413;
         genesis.nBits = 0x200f0f0f;
-        genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000009");
-        genesis.nSolution = ParseHex("05ffd6ad016271ade20cfce093959c3addb2079629f9f123c52ef920caa316531af5af3f");
+        genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000025");
+        genesis.nSolution = ParseHex("06d18c2e52bace73990bdaa3fd64ff2d6323178f74ddf6db7217671e71ce2ea24f11c59c");
         consensus.hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 3130;
-        // assert(consensus.hashGenesisBlock == uint256S("0x0575f78ee8dc057deee78ef691876e3be29833aaee5e189bb0459c087451305a"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0d7dd7d17fb3790fa94170e32502c1db54e32cc6c6246b3699b677d33bd389a4"));
         nPruneAfterHeight = 1000;
 
         vFixedSeeds.clear(); //! Regtest mode doesn't have any fixed seeds.
@@ -310,7 +304,7 @@ public:
 
         checkpointData = (Checkpoints::CCheckpointData){
             boost::assign::map_list_of
-            ( 0, uint256S("0x0575f78ee8dc057deee78ef691876e3be29833aaee5e189bb0459c087451305a")),
+            ( 0, uint256S("0x0d7dd7d17fb3790fa94170e32502c1db54e32cc6c6246b3699b677d33bd389a4")),
             0,
             0,
             0
@@ -362,7 +356,3 @@ bool SelectParamsFromCommandLine()
     SelectParams(network);
     return true;
 }
-
-
-
-
