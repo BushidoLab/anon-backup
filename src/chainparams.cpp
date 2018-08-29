@@ -54,10 +54,16 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
-        pchMessageStart[0] = 0x83;
-        pchMessageStart[1] = 0xd8;
-        pchMessageStart[2] = 0x47;
+        pchMessageStart[0] = 0x33;
+        pchMessageStart[1] = 0x88;
+        pchMessageStart[2] = 0x55;
         pchMessageStart[3] = 0xa7;
+
+        // pchMessageStart[0] = 0x83;
+        // pchMessageStart[1] = 0xd8;
+        // pchMessageStart[2] = 0x47;
+        // pchMessageStart[3] = 0xa7;
+
         vAlertPubKey = ParseHex("04f2cd746e629ffd320a81287474c98c2ad15d15b0a210b0144edcd8f3e1301c6311fd751fa34ba17d88090374cfec7cd9aaca55a5a0c4456511acc01b922005de");
         nDefaultPort = 33333;
         nMaxTipAge = 24 * 60 * 60;
@@ -152,10 +158,10 @@ public:
                             //   total number of tx / (checkpoint block height / (24 * 24))
         };
 
-        nForkStartHeight = 20;
-        nForkHeightRange = 11671;
-        nZtransparentStartBlock = 5152;
-        nZshieldedStartBlock = 5275;
+        nForkStartHeight = 10;
+        nForkHeightRange = 11355;
+        nZtransparentStartBlock = 4932 + nForkStartHeight;
+        nZshieldedStartBlock = 5045 + nForkStartHeight;
 
     }
 };
