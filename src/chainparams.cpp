@@ -159,10 +159,9 @@ public:
         };
 
         nForkStartHeight = 10;
-        nForkHeightRange = 11355;
-        nZtransparentStartBlock = 4932 + nForkStartHeight;
-        nZshieldedStartBlock = 5045 + nForkStartHeight;
-
+        nForkHeightRange = 16398;
+        nZtransparentStartBlock = 9862 + nForkStartHeight;
+        nZshieldedStartBlock = 10088 + nForkStartHeight;
     }
 };
 static CMainParams mainParams;
