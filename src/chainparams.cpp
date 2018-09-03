@@ -142,9 +142,9 @@ public:
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
         checkpointData = {
             {
-                {      0, consensus.hashGenesisBlock },
-                {  1000, uint256S("0x6bd4d8d4a568b5f2fc1301cc8fa26bce1059dc97e95428e961b9c35146cf2603") },
-                { 11000, uint256S("0x5a62972549973626c4147016692b87bcbf6ab892537b556222062e11f40694d0") }
+                {      0, consensus.hashGenesisBlock }
+                // {  1000, uint256S("0x6bd4d8d4a568b5f2fc1301cc8fa26bce1059dc97e95428e961b9c35146cf2603") },
+                // { 11000, uint256S("0x5a62972549973626c4147016692b87bcbf6ab892537b556222062e11f40694d0") }
                 // { 272992, uint256S("0x0102a4e1353149c9221ebd7c45b3170ea4b8a7d1cf4075b3bc50c440fb9ebdd6") },
                 // { 273992, uint256S("0x000822e42b2128a296b704c273a4c3f0e707b06305d2be521cf7577ef67e476a") },
                 // { 274992, uint256S("0x03e91186991b31044179b82e88ee06c2205e3304a525d130070153fde4aaf414") },
