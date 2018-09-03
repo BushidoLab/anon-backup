@@ -3317,7 +3317,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     if (looksLikeForkBlockHeader(block) && !isForkBlock(nHeight))
         return state.DoS(100, error("%s: non-fork block looks like fork block", __func__),
                          REJECT_INVALID, "bad-fork-hashreserved");
-
+    
     if (!looksLikeForkBlockHeader(block) && isForkBlock(nHeight))
         return state.DoS(100, error("%s: fork block does not look like fork block", __func__),
                          REJECT_INVALID, "bad-fork-hashreserved");

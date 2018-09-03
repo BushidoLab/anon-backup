@@ -836,7 +836,18 @@ CBlockTemplate* CreateNewBlockWithKey()
     if (!scriptPubKey) {
         return NULL;
     }
-    return CreateNewBlock(*scriptPubKey);
+    const CChainParams& chainparams = Params();
+    uint64_t nForkStartHeight = chainparams.ForkStartHeight();
+    uint64_t nForkHeightRange = chainparams.ForkHeightRange();
+    
+    int newBlockHeight = chainActive.Tip()->nHeight+1;
+    bool bFileNotFound = false;
+
+    if(newBlockHeight > nForkStartHeight && newBlockHeight <= nForkStartHeight + nForkHeightRange){
+        return CreateNewForkBlock(bFileNotFound);
+    } else {
+        return CreateNewBlock(*scriptPubKey);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////
