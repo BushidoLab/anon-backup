@@ -54,6 +54,9 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
+        consensus.nForkStartHeight = 10;
+        consensus.nForkHeightRange = 16398;
+
         pchMessageStart[0] = 0x33;
         pchMessageStart[1] = 0x88;
         pchMessageStart[2] = 0x55;
@@ -68,9 +71,8 @@ public:
         nDefaultPort = 33333;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        // const size_t N = 144, K = 5;
+        const size_t N = 144, K = 5;
         // const size_t N = 200, K = 9;
-        const size_t N = 48, K = 5;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;

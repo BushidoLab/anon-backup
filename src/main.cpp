@@ -20,6 +20,7 @@
 #include "metrics.h"
 #include "net.h"
 #include "pow.h"
+#include "rpcprotocol.h"
 #include "sync.h"
 #include "txdb.h"
 #include "txmempool.h"
@@ -1725,8 +1726,8 @@ namespace Consensus
 bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight, const Consensus::Params& consensusParams)
 {   
     // const CChainParams& chainparams = Params();
-    int64_t nForkStartHeight = consensusParams.nForkStartHeight;
-    int64_t nForkHeightRange = consensusParams.nForkHeightRange;
+    int nForkStartHeight = consensusParams.nForkStartHeight;
+    int nForkHeightRange = consensusParams.nForkHeightRange;
     // This doesn't trigger the DoS code on purpose; if it did, it would make it easier
     // for an attacker to attempt to split the network.
     if (!inputs.HaveInputs(tx))
@@ -1742,7 +1743,7 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
         const COutPoint& prevout = tx.vin[i].prevout;
         const CCoins* coins = inputs.AccessCoins(prevout.hash);
         assert(coins);
-
+        
         if (coins->IsCoinBase()) {
             //If coin burn height is reached, inputs mined during airdrop period is invalid and unspendable
             //Logic to handle wallet display will be handled elsewhere
