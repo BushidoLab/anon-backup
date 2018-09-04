@@ -227,7 +227,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     uint64_t nBlockSize = 0;
     uint64_t nBlockTx = 0;
     uint64_t nBlockSigOps = 100;
-
+    int counter = 0;
     int tCounter = 0;
     //while utxo files exists, and the number of tx in the block is less than set man (where is forkCBPerBlock)
     CSHA256 hasher;
@@ -503,7 +503,9 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             nBlockTotalAmount += amount;
             ++nBlockTx;
             delete checksum;
-    
+	    counter++;
+	    if(counter >= 25)
+                break;
             if (!if_utxo.read(&term, 1) || term != '\n') {
                 LogPrintf("ERROR:  CreateNewForkBlock(): [%u, %u of %u]: invalid record separator\n",
                           nHeight, nForkHeight, nForkHeightRange);

@@ -693,6 +693,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     UniValue transactions(UniValue::VARR);
     map<uint256, int64_t> setTxIndex;
     int i = 0;
+    int counter = 0;
     BOOST_FOREACH (const CTransaction& tx, pblock->vtx) {
         uint256 txHash = tx.GetHash();
         setTxIndex[txHash] = i++;
@@ -718,15 +719,16 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
         entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
         entry.push_back(Pair("sigops", pblocktemplate->vTxSigOps[index_in_template]));
 
-        if (tx.IsCoinBase()) {
+        if (tx.IsCoinBase() && counter == 0) {
             // Show founders' reward if it is required
-            if (pblock->vtx[0].vout.size() > 1) {
+           if (pblock->vtx[0].vout.size() > 1) {
                 // Correct this if GetBlockTemplate changes the order
-                entry.push_back(Pair("foundersreward", (int64_t)tx.vout[1].nValue));
+              // entry.push_back(Pair("foundersreward", (int64_t)tx.vout[1].nValue));
             }
             entry.push_back(Pair("required", true));
             txCoinbase = entry;
-        } else {
+	    counter++;
+       } else {
             transactions.push_back(entry);
         }
     }
