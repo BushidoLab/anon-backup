@@ -47,7 +47,7 @@ public:
         consensus.nPowMaxAdjustUp = 16; // 16% adjustment up
         consensus.nPowTargetSpacing = 10 * 60; // time between blocks (sec)
         consensus.fPowAllowMinDifficultyBlocks = false;
-        consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
+        consensus.nRuleChangeActivationThreshold = 0; // 95% of 2016
         consensus.nMinerConfirmationWindow = 17; // nPowTargetTimespan / nPowTargetSpacing
 
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -71,7 +71,7 @@ public:
         nDefaultPort = 33333;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        const size_t N = 144, K = 5;
+        const size_t N = 48, K = 5;
         // const size_t N = 200, K = 9;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;

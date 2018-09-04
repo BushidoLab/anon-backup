@@ -3365,13 +3365,13 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
     // In Zcash this has been enforced since launch, except that the genesis
     // block didn't include the height in the coinbase (see Zcash protocol spec
     // section '6.8 Bitcoin Improvement Proposals').
-    if (nHeight > 0) {
-        CScript expect = CScript() << nHeight;
-        if (block.vtx[0].vin[0].scriptSig.size() < expect.size() ||
-            !std::equal(expect.begin(), expect.end(), block.vtx[0].vin[0].scriptSig.begin())) {
-            return state.DoS(100, error("%s: block height mismatch in coinbase", __func__), REJECT_INVALID, "bad-cb-height");
-        }
-    }
+    //if (nHeight > 0) {
+      //  CScript expect = CScript() << nHeight;
+       // if (block.vtx[0].vin[0].scriptSig.size() < expect.size() ||
+         //   !std::equal(expect.begin(), expect.end(), block.vtx[0].vin[0].scriptSig.begin())) {
+           // return state.DoS(100, error("%s: block height mismatch in coinbase", __func__), REJECT_INVALID, "bad-cb-height");
+       // }
+   // }
 
     return true;
 }
