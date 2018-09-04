@@ -794,6 +794,8 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     result.push_back(Pair("vbrequired", int(0)));
 
     result.push_back(Pair("previousblockhash", pblock->hashPrevBlock.GetHex()));
+    uint256 forkExtraHashSentinel = uint256S("f0f0f0f0fafafafaffffffffffffffffffffffffffffffffafafafaf0f0f0f0f");
+    result.push_back(Pair("hashReserved", forkExtraHashSentinel.GetHex()));
     result.push_back(Pair("transactions", transactions));
     if (coinbasetxn) {
         assert(txCoinbase.isObject());

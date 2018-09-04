@@ -385,6 +385,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     } else {
         LogPrintf("ANON Miner: switching into t-fork mode\n");
         while (if_utxo && nBlockTx < forkCBPerBlock) {
+            
             char term = 0;
             ////////////////////////Format checks, explore more when looking at UTXO raw
             //Value
@@ -502,7 +503,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             nBlockTotalAmount += amount;
             ++nBlockTx;
             delete checksum;
-
+    
             if (!if_utxo.read(&term, 1) || term != '\n') {
                 LogPrintf("ERROR:  CreateNewForkBlock(): [%u, %u of %u]: invalid record separator\n",
                           nHeight, nForkHeight, nForkHeightRange);

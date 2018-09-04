@@ -459,6 +459,7 @@ UniValue getblock(const UniValue& params, bool fHelp)
         CDataStream ssBlock(SER_NETWORK, PROTOCOL_VERSION);
         ssBlock << block;
         std::string strHex = HexStr(ssBlock.begin(), ssBlock.end());
+        LogPrintf("Raw block: %s\n", strHex);
         return strHex;
     }
 
