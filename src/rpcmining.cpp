@@ -893,7 +893,6 @@ UniValue submitblock(const UniValue& params, bool fHelp)
         );
 
     CBlock block;
-    LogPrintf("block: %s\n",params[0].get_str());
     if (!DecodeHexBlk(block, params[0].get_str()))
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
 
