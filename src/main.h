@@ -1031,7 +1031,9 @@ inline bool isForkBlock(int nHeight)
 
 inline bool looksLikeForkBlockHeader(const CBlockHeader& header)
 {
-    return header.hashReserved == forkExtraHashSentinel;
+    //LogPrintf("header.hashReserved: %s\n", header.hashReserved.GetHex());
+   // LogPrintf("forkExtraHashSentinel: %s\n", forkExtraHashSentinel.GetHex());
+	return header.hashReserved == forkExtraHashSentinel;
 }
 
 inline bool isForkBlockHeader(const CBlockHeader& header)

@@ -794,7 +794,8 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     result.push_back(Pair("rules", aRules));
     result.push_back(Pair("vbavailable", vbavailable));
     result.push_back(Pair("vbrequired", int(0)));
-
+   uint256 forkExtraHashSentinel = uint256S("f0f0f0f0fafafafaffffffffffffffffffffffffffffffffafafafaf0f0f0f0f");
+    result.push_back(Pair("hashReserved", forkExtraHashSentinel.GetHex()));
     result.push_back(Pair("previousblockhash", pblock->hashPrevBlock.GetHex()));
     result.push_back(Pair("transactions", transactions));
     if (coinbasetxn) {
@@ -890,6 +891,7 @@ UniValue submitblock(const UniValue& params, bool fHelp)
         );
 
     CBlock block;
+    LogPrintf("block: %s\n",params[0].get_str());
     if (!DecodeHexBlk(block, params[0].get_str()))
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Block decode failed");
 
