@@ -728,9 +728,8 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
             entry.push_back(Pair("required", true));
             txCoinbase = entry;
 	    counter++;
-       } else {
-            transactions.push_back(entry);
-        }
+       } 
+        transactions.push_back(entry);
     }
 
     UniValue aux(UniValue::VOBJ);
@@ -801,8 +800,8 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp)
     if (coinbasetxn) {
         assert(txCoinbase.isObject());
         result.push_back(Pair("coinbasetxn", txCoinbase));
-     }
-    //  else {
+    } 
+    // else {
         result.push_back(Pair("coinbaseaux", aux));
         result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].vout[0].nValue));
     // }
