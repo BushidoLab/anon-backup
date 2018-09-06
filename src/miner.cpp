@@ -420,8 +420,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                           nHeight, nForkHeight, nForkHeightRange);
                 break;
             }
-            ////////////////////////////////////////////////////////////////////////
-
+            ///////////////////////CHECKSUM//////////////////////////////////
             hasher.Reset();
    
             unsigned char* script = (unsigned char*)pubKeyScript.get();
@@ -451,6 +450,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
 
             //quit if checksums doesn't match
             assert(utxoHash == transChecksum && "Utxo checksum doesn't match");
+            ///////////////////////CHECKSUM END//////////////////////////////////
 
             //Needs ut64 for files? Part of .bin?
             uint64_t amount = bytes2uint64(coin);

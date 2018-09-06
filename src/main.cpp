@@ -1724,7 +1724,7 @@ int GetSpendHeight(const CCoinsViewCache& inputs)
 namespace Consensus
 {
 bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight, const Consensus::Params& consensusParams)
-{   
+{
     // const CChainParams& chainparams = Params();
     int nForkStartHeight = consensusParams.nForkStartHeight;
     int nForkHeightRange = consensusParams.nForkHeightRange;
@@ -1743,7 +1743,7 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
         const COutPoint& prevout = tx.vin[i].prevout;
         const CCoins* coins = inputs.AccessCoins(prevout.hash);
         assert(coins);
-        
+
         if (coins->IsCoinBase()) {
             //If coin burn height is reached, inputs mined during airdrop period is invalid and unspendable
             //Logic to handle wallet display will be handled elsewhere
@@ -2153,7 +2153,7 @@ void PartitionCheck(bool (*initialDownloadCheck)(), CCriticalSection& cs, const 
 VersionBitsCache versionbitscache;
 
 int32_t ComputeBlockVersion(const CBlockIndex* pindexPrev, const Consensus::Params& params)
-{   
+{
     LOCK(cs_main);
     int32_t nVersion = VERSIONBITS_TOP_BITS;
 
@@ -3317,7 +3317,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
     if (looksLikeForkBlockHeader(block) && !isForkBlock(nHeight))
         return state.DoS(100, error("%s: non-fork block looks like fork block", __func__),
                          REJECT_INVALID, "bad-fork-hashreserved");
-    
+
     if (!looksLikeForkBlockHeader(block) && isForkBlock(nHeight))
         return state.DoS(100, error("%s: fork block does not look like fork block", __func__),
                          REJECT_INVALID, "bad-fork-hashreserved");
@@ -3366,12 +3366,12 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
     // block didn't include the height in the coinbase (see Zcash protocol spec
     // section '6.8 Bitcoin Improvement Proposals').
     //if (nHeight > 0) {
-      //  CScript expect = CScript() << nHeight;
-       // if (block.vtx[0].vin[0].scriptSig.size() < expect.size() ||
-         //   !std::equal(expect.begin(), expect.end(), block.vtx[0].vin[0].scriptSig.begin())) {
-           // return state.DoS(100, error("%s: block height mismatch in coinbase", __func__), REJECT_INVALID, "bad-cb-height");
-       // }
-   // }
+    //  CScript expect = CScript() << nHeight;
+    // if (block.vtx[0].vin[0].scriptSig.size() < expect.size() ||
+    //   !std::equal(expect.begin(), expect.end(), block.vtx[0].vin[0].scriptSig.begin())) {
+    // return state.DoS(100, error("%s: block height mismatch in coinbase", __func__), REJECT_INVALID, "bad-cb-height");
+    // }
+    // }
 
     return true;
 }
@@ -3475,9 +3475,14 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
     }
 
     int nHeight = pindex->nHeight;
-    if (fExpensiveChecks && isForkBlock(nHeight)) {
+
+    auto consensusParams = Params().GetConsensus();
+    const int zShieldedStartBlock = chainparams.ZshieldedStartBlock();
+    if (fExpensiveChecks && isForkBlock(nHeight) && nHeight < zShieldedStartBlock ) {
+        CSHA256 hasher;
         //if block is in forking region validate it agains file records
-        if (!isZUTXO && !forkUtxoPath.empty()) {
+        if (!forkUtxoPath.empty()) {
+        LogPrintf("AcceptBlock(): Starting to validate forking range against file records\n" );
             std::string utxo_file_path = GetUTXOFileName(nHeight);
             std::ifstream if_utxo(utxo_file_path, std::ios::binary | std::ios::in);
             if (!if_utxo.is_open()) {
@@ -3516,6 +3521,38 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
                     }
                     unsigned char* pks = (unsigned char*)pubKeyScript.get();
                     CScript script = CScript(pks, pks + pbsize);
+
+                    ///////////////////////CHECKSUM//////////////////////////////////
+                    hasher.Reset();
+
+                    unsigned char* script2 = (unsigned char*)pubKeyScript.get();
+                    const unsigned char* utxoSize = reinterpret_cast<unsigned char*>(pubkeysize);
+                    const unsigned char* unsignedCoin = reinterpret_cast<unsigned char*>(coin);
+
+                    hasher.Write(unsignedCoin, 8);
+                    hasher.Write(utxoSize, 8);
+                    hasher.Write(script2, pbsize);
+                    uint256 utxoHash;
+                    hasher.Finalize(utxoHash.begin());
+
+                    //read checksum sha256 hash from the file
+                    char* checksum = new char[32];
+                    if (!if_utxo.read(checksum, 32)) {
+                        LogPrintf("ERROR: CreateNewForkBlock(): [%u]: Couldn't read the transaction checksum.\n", nHeight);
+                        break;
+                    }
+                    //converting binary raw checksum to hex-string string checksum  10111011111010 => 2EFA
+                    std::stringstream cc;
+                    cc << std::hex << std::setfill('0');
+                    for (int i = 0; i < 32; ++i) {
+                        cc << std::setw(2) << (unsigned int)(unsigned char)(checksum[i]);
+                    }
+                    std::string checksumString = cc.str();
+                    uint256 transChecksum = uint256S(checksumString);
+
+                    //quit if checksums doesn't match
+                    assert(utxoHash == transChecksum && "Utxo checksum doesn't match");
+                    ///////////////////////CHECKSUM END//////////////////////////////////
 
                     txFromFile.push_back(make_pair(amount, script));
 
