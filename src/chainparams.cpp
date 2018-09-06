@@ -71,8 +71,8 @@ public:
         nDefaultPort = 33333;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        const size_t N = 144, K = 5;
-        // const size_t N = 200, K = 9;
+        // const size_t N = 144, K = 5;
+        const size_t N = 200, K = 9;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
@@ -161,7 +161,7 @@ public:
                             //   total number of tx / (checkpoint block height / (24 * 24))
         };
 
-        nForkStartHeight = 10;
+        nForkStartHeight = 1;
         nForkHeightRange = 12148;
         nZtransparentStartBlock = 5479 + nForkStartHeight;
         nZshieldedStartBlock = 5609 + nForkStartHeight;
