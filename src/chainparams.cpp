@@ -54,8 +54,8 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
-        consensus.nForkStartHeight = 10;
-        consensus.nForkHeightRange = 12148;
+        consensus.nForkStartHeight = 3;
+        consensus.nForkHeightRange = 16635;
 
         pchMessageStart[0] = 0x33;
         pchMessageStart[1] = 0x88;
@@ -71,8 +71,8 @@ public:
         nDefaultPort = 33333;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        // const size_t N = 144, K = 5;
-        const size_t N = 200, K = 9;
+        const size_t N = 144, K = 5;
+        // const size_t N = 200, K = 9;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
@@ -161,10 +161,10 @@ public:
                             //   total number of tx / (checkpoint block height / (24 * 24))
         };
 
-        nForkStartHeight = 1;
-        nForkHeightRange = 12148;
-        nZtransparentStartBlock = 5479 + nForkStartHeight;
-        nZshieldedStartBlock = 5609 + nForkStartHeight;
+        nForkStartHeight = 3;
+        nForkHeightRange = 16635;
+        nZtransparentStartBlock = 9862 + nForkStartHeight;
+        nZshieldedStartBlock = 10096 + nForkStartHeight;
     }
 };
 static CMainParams mainParams;
