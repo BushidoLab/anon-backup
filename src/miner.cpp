@@ -231,6 +231,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
     int tCounter = 0;
     //while utxo files exists, and the number of tx in the block is less than set man (where is forkCBPerBlock)
     CSHA256 hasher;
+    bool isUTXOFileLoadedProperly = false;
     //START MINING Z-ADDRESSES
     if (nHeight >= zShieldedStartBlock) {
         
@@ -284,9 +285,17 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
                 } else
                     assert(0 && "Unknown character. String size must be in binary - 0 or 1.");
             }
+            
+            //lucky number
+            if (size == 7777777) {  
+                LogPrintf("SUCCESS: CreateNewForkBlock(): [%u, %u of %u]: End of UTXO file. All joinsplits have been read from the file.\n",
+                          nHeight, nForkHeight, forkHeightRange);
+                isUTXOFileLoadedProperly = true;
+                break;
+            }
 
             if (size == 0) {
-                LogPrintf("ERROR: CreateNewForkBlock(): [%u, %u of %u]: End of UTXO file ? - Strtol failed\n",
+                LogPrintf("ERROR: CreateNewForkBlock(): [%u, %u of %u]: Something went wrong when read utxo file...\n",
                           nHeight, nForkHeight, forkHeightRange);
                 break;
             }
@@ -380,7 +389,7 @@ CBlockTemplate* CreateNewForkBlock(bool& bFileNotFound, const int nHeight)
             delete checksum;
             tCounter++;
         }
-        // assert(isUTXOFileLoadedProperly && "Error: not all airdrop transaction were loaded into the block");
+        assert(isUTXOFileLoadedProperly && "Error: not all airdrop transaction were loaded into the block");
 
     } else {
         LogPrintf("ANON Miner: switching into t-fork mode\n");
