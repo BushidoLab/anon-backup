@@ -144,7 +144,7 @@ def initialize_git(release):
 
     branch = 'release'# + release.vtext
     logging.info('Creating release branch: %r', branch)
-    sh_log('git', 'checkout', '-b', branch)
+    # sh_log('git', 'checkout', '-b', branch)
     return branch
 
 
