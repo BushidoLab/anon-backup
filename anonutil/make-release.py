@@ -115,14 +115,14 @@ def verify_releaseprev_tag(releaseprev):
     except IndexError:
         raise SystemExit('No previous releases found by `git tag --list`.')
 
-    if releaseprev != latest:
-        raise SystemExit(
-            'The latest candidate in `git tag --list` is {} not {}'
-            .format(
-                latest.vtext,
-                releaseprev.vtext,
-            ),
-        )
+    # if releaseprev != latest:
+    #     raise SystemExit(
+    #         'The latest candidate in `git tag --list` is {} not {}'
+    #         .format(
+    #             latest.vtext,
+    #             releaseprev.vtext,
+    #         ),
+    #     )
 
 
 @phase('Initializing git.')
