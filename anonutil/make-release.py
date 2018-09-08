@@ -140,9 +140,9 @@ def initialize_git(release):
     #     )
 
     logging.info('Pulling to latest master.')
-    sh_log('git', 'pull', '--ff-only')
+    # sh_log('git', 'pull', '--ff-only')
 
-    branch = 'release-' + release.vtext
+    branch = 'release'# + release.vtext
     logging.info('Creating release branch: %r', branch)
     sh_log('git', 'checkout', '-b', branch)
     return branch
