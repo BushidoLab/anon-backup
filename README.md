@@ -10,7 +10,8 @@ Anonymous Bitcoin is a dual-fork-merge of the Official Bitcoin and Zclassic Bloc
 
 Development Status
 -----------------
-[![Build Status](https://travis-ci.com/ByeBugDevelopment/anon-backup.svg?token=WBBgtRXJbdCRsjxqqhJy&branch=master)](https://travis-ci.com/ByeBugDevelopment/anon-backup)
+
+[![Build Status](https://travis-ci.com/BushidoLab/anon-backup.svg?branch=travis_test)](https://travis-ci.com/BushidoLab/anon-backup)
 
 **Key Features**
 ----------------
