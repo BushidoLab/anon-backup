@@ -69,6 +69,4 @@ script:
     # - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.sh; fi
     - ./anonutil/build.sh
 after_script:
-    - ./qa/pull-tester/rpc-tests.sh
-    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then (echo "Upload goes here. Something like: scp -r $BASE_OUTDIR server" || echo "upload failed"); fi
 
