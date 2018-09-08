@@ -132,12 +132,12 @@ def initialize_git(release):
         raise SystemExit('There are uncommitted changes:\n' + junk)
 
     branch = sh_out('git', 'rev-parse', '--abbrev-ref', 'HEAD').strip()
-    if branch != 'master':
-        raise SystemExit(
-            "Expected branch 'master', found branch {!r}".format(
-                branch,
-            ),
-        )
+    # if branch != 'master':
+    #     raise SystemExit(
+    #         "Expected branch 'master', found branch {!r}".format(
+    #             branch,
+    #         ),
+    #     )
 
     logging.info('Pulling to latest master.')
     sh_log('git', 'pull', '--ff-only')
