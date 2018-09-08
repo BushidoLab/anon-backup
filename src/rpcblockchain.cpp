@@ -1,4 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
+// 
 // Copyright (c) 2009-2014 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -121,18 +122,18 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     result.push_back(Pair("version", block.nVersion));
     result.push_back(Pair("merkleroot", block.hashMerkleRoot.GetHex()));
     UniValue txs(UniValue::VARR);
-    BOOST_FOREACH(const CTransaction&tx, block.vtx)
-    {
-        if(txDetails)
-        {
-            UniValue objTx(UniValue::VOBJ);
-            TxToJSON(tx, uint256(), objTx);
-            txs.push_back(objTx);
-        }
-        else
-            txs.push_back(tx.GetHash().GetHex());
-    }
-    result.push_back(Pair("tx", txs));
+    //BOOST_FOREACH(const CTransaction&tx, block.vtx)
+    //{
+      //  if(txDetails)
+       // {
+         //   UniValue objTx(UniValue::VOBJ);
+           // TxToJSON(tx, uint256(), objTx);
+           // txs.push_back(objTx);
+       // }
+       // else
+         //   txs.push_back(tx.GetHash().GetHex());
+    //}
+    result.push_back(Pair("tx", "turned off"));
     result.push_back(Pair("time", block.GetBlockTime()));
     result.push_back(Pair("nonce", block.nNonce.GetHex()));
     result.push_back(Pair("solution", HexStr(block.nSolution)));
