@@ -1,5 +1,5 @@
 ---
-name: "zcash-1.0.12-1"
+name: "anon-1.0.0-beta1"
 enable_cache: true
 distro: "debian"
 suites:
