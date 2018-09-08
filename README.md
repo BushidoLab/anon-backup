@@ -1,4 +1,4 @@
-# Project is currently experimental and in TESTNET phase
+Anonymous Bitcoin 1.0.0-beta1
 
 
 Anonymous Bitcoin

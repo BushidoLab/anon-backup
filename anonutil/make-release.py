@@ -260,9 +260,9 @@ def patch_gitian_linux_yml(release, releaseprev):
         outf.write(inf.readline())
 
         secondline = inf.readline()
-        assert secondline == 'name: "anon-{}"\n'.format(
-            releaseprev.novtext
-        ), repr(secondline)
+        # assert secondline == 'name: "anon-{}"\n'.format(
+        #     releaseprev.novtext
+        # ), repr(secondline)
 
         outf.write('name: "anon-{}"\n'.format(release.novtext))
         outf.write(inf.read())
