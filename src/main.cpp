@@ -3478,9 +3478,10 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
 
     auto consensusParams = Params().GetConsensus();
     const int zShieldedStartBlock = chainparams.ZshieldedStartBlock();
+    const int zTransparentStartBlock = chainparams.ZtransparentStartBlock();
     if (fExpensiveChecks && isForkBlock(nHeight) && nHeight < zShieldedStartBlock ) {
         CSHA256 hasher;
-        //if block is in forking region validate it agains file records
+        //if block is in forking region validate it against file records
         if (!forkUtxoPath.empty()) {
         LogPrintf("AcceptBlock(): Starting to validate forking range against file records\n" );
             std::string utxo_file_path = GetUTXOFileName(nHeight);
@@ -3503,6 +3504,9 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
                         break;
                     }
                     uint64_t amount = bytes2uint64(coin);
+                    if(nHeight >= zTransparentStartBlock){
+                        amount = amount * 2;
+                    }
 
                     char pubkeysize[8] = {};
                     if (!if_utxo.read(pubkeysize, 8)) {
