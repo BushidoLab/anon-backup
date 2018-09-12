@@ -227,6 +227,8 @@ To set up a masternode, refer to the [following guide](/doc/masternode_setup.md)
 	- Discord: https://discord.gg/hjeBaBx
 	- Telgram: https://t.me/anonymousbitcoin
 
+For more information regarding the disclosure of vulnerabilities within ANON, please refer to the [vulnerability disclosure](https://www.anonfork.io/disclosure) page.
+
 ## Contribute
 
 * Code review is welcome!
