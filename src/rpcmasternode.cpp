@@ -32,7 +32,7 @@ UniValue masternode(const UniValue& params, bool fHelp)
         (strCommand != "start" && strCommand != "start-alias" && strCommand != "start-all" && strCommand != "start-missing" &&
          strCommand != "start-disabled" && strCommand != "list" && strCommand != "list-conf" && strCommand != "count" &&
          strCommand != "debug" && strCommand != "current" && strCommand != "winner" && strCommand != "winners" && strCommand != "genkey" &&
-         strCommand != "connect" && strCommand != "outputs" && strCommand != "status" && strCommand != "mymasternodes"))
+         strCommand != "connect" && strCommand != "outputs" && strCommand != "status" && strCommand != "mymasternodes" && strCommand != "outputsArr"))
         throw std::runtime_error(
             "masternode \"command\"...\n"
             "Set of commands to execute masternode related actions\n"
@@ -292,13 +292,19 @@ UniValue masternode(const UniValue& params, bool fHelp)
         UniValue alwaysEmptyArray(UniValue::VARR);
         UniValue arr(UniValue::VARR);
         UniValue wArr(UniValue::VARR);
+        #include <type_traits>
+        #include <typeinfo>
 
         BOOST_FOREACH (CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
             CTxIn vin = CTxIn(uint256S(mne.getTxHash()), uint32_t(atoi(mne.getOutputIndex().c_str())));
             CMasternode* pmn = mnodeman.Find(vin);
 
             std::string strStatus = pmn ? pmn->GetStatus() : "MISSING";
-
+            UniValue strTxHash = UniValue(UniValue::VARR);
+            strTxHash.push_back(mne.getTxHash());
+            auto bal = gettransaction(strTxHash, false).get_str();
+            LogPrintf("jnfdhjgajkdnghadknhkajdnfknhaknfdkhkadhnakdnfhk%s\n", bal);
+            arr.push_back(bal);
             arr.push_back(mne.getAlias());
             arr.push_back(mne.getIp());
             arr.push_back(mne.getPrivKey());
@@ -319,6 +325,19 @@ UniValue masternode(const UniValue& params, bool fHelp)
         pwalletMain->AvailableCoins(vPossibleCoins, true, NULL, false, false, ONLY_500);
 
         UniValue obj(UniValue::VOBJ);
+        BOOST_FOREACH (COutput& out, vPossibleCoins) {
+            obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
+        }
+
+        return obj;
+    }
+
+    if (strCommand == "outputsArr") {
+        // Find possible candidates
+        std::vector<COutput> vPossibleCoins;
+        pwalletMain->AvailableCoins(vPossibleCoins, true, NULL, false, false, ONLY_500);
+
+        UniValue obj(UniValue::VARR);
         BOOST_FOREACH (COutput& out, vPossibleCoins) {
             obj.push_back(Pair(out.tx->GetHash().ToString(), strprintf("%d", out.i)));
         }
