@@ -2239,7 +2239,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
             for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                 bool found = false;
                 if(nCoinType == ONLY_500) {
-                    found = pcoin->vout[i].nValue == 5000*COIN;
+                    found = pcoin->vout[i].nValue == 10000*COIN;
                 } else {
                     found = true;
                 }
