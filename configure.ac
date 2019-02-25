@@ -826,7 +826,7 @@ AX_CHECK_COMPILE_FLAG([-fno-strict-aliasing],[CXXFLAGS="$CXXFLAGS -fno-strict-al
 # fi
 
 
-LIBZCASH_LIBS="-lgmp -lgmpxx -lboost_system -lcrypto -lsodium $RUST_LIBS"
+LIBZCASH_LIBS="-lgmp -lgmpxx -lboost_system-mt -lcrypto -lsodium $RUST_LIBS"
 
 
 AC_MSG_CHECKING([whether to build bitcoind])

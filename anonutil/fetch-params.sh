@@ -13,8 +13,7 @@ SPROUT_VKEY_NAME='sprout-verifying.key'
 SAPLING_SPEND_NAME='sapling-spend.params'
 SAPLING_OUTPUT_NAME='sapling-output.params'
 SAPLING_SPROUT_GROTH16_NAME='sprout-groth16.params'
-SPROUT_URL="https://downloads.horizen.global/file/TrustedSetup"
-SPROUT_IPFS="/ipfs/QmZKKx7Xup7LiAtFRhYsE1M7waXcv9ir9eCECyXAFGxhEo"
+SPROUT_URL="https://assets.anonfork.io/trusted-setup"
 
 SHA256CMD="$(command -v sha256sum || echo shasum)"
 SHA256ARGS="$(command -v sha256sum >/dev/null || echo '-a 256')"
@@ -25,7 +24,6 @@ CURLCMD="$(command -v curl || echo '')"
 
 # fetch methods can be disabled with ZC_DISABLE_SOMETHING=1
 ZC_DISABLE_WGET="${ZC_DISABLE_WGET:-}"
-ZC_DISABLE_IPFS="${ZC_DISABLE_IPFS:-}"
 ZC_DISABLE_CURL="${ZC_DISABLE_CURL:-}"
 
 function fetch_wget {
@@ -58,12 +56,6 @@ function fetch_ipfs {
     local dlname="$2"
 
     cat <<EOF
-
-Retrieving (ipfs): $SPROUT_IPFS/$filename
-EOF
-
-    ipfs get --output "$dlname" "$SPROUT_IPFS/$filename"
-}
 
 function fetch_curl {
     if [ -z "$CURLCMD" ] || ! [ -z "$ZC_DISABLE_CURL" ]; then
