@@ -280,11 +280,11 @@ TEST(wallet_tests, find_unspent_notes) {
     // Increasing number of confirmations will exclude our new unspent note.
     wallet.GetFilteredNotes(entries, "", 2, false);
     EXPECT_EQ(1, entries.size());
-    entries.clear();
+    entries.clear();    
     // If we also ignore spent notes at thie depth, we won't find any notes.
     wallet.GetFilteredNotes(entries, "", 2, true);
     EXPECT_EQ(0, entries.size());
-    entries.clear();
+    entries.clear(); 
 
     // Tear down
     chainActive.SetTip(NULL);
@@ -328,7 +328,7 @@ TEST(wallet_tests, GetNoteNullifier) {
 
     auto sk = libzcash::SpendingKey::random();
     auto address = sk.address();
-    auto dec = ZCNoteDecryption(sk.viewing_key());
+    auto dec = ZCNoteDecryption(sk.receiving_key());
 
     auto wtx = GetValidReceive(sk, 10, true);
     auto note = GetNote(sk, wtx, 0, 1);
@@ -580,8 +580,8 @@ TEST(wallet_tests, cached_witnesses_empty_chain) {
     EXPECT_TRUE((bool) witnesses[1]);
 
     // Until #1302 is implemented, this should triggger an assertion
-    EXPECT_DEATH(wallet.DecrementNoteWitnesses(&index),
-                 "nWitnessCacheSize > 0");
+    /*EXPECT_DEATH(wallet.DecrementNoteWitnesses(&index),
+                 "Assertion( `| failed: \()nWitnessCacheSize > 0");*/
 }
 
 TEST(wallet_tests, cached_witnesses_chain_tip) {

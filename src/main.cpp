@@ -693,11 +693,21 @@ unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans) EXCLUSIVE_LOCKS_REQUIRE
 
 
 bool IsStandardTx(const CTransaction& tx, string& reason)
-{
-    if (tx.nVersion > CTransaction::MAX_CURRENT_VERSION || tx.nVersion < CTransaction::MIN_CURRENT_VERSION) {
-        reason = "version";
-        return false;
-    }
+{   
+    int nextBlockHeight = chainActive.Height() + 1;
+	const bool isGROTHActive = Params().isGrothActive(nextBlockHeight);
+
+	if(!isGROTHActive) {
+		if (tx.nVersion > CTransaction::MAX_OLD_VERSION || tx.nVersion < CTransaction::MIN_OLD_VERSION) {
+			reason = "version";
+			return false;
+		}
+	} else {
+		if (tx.nVersion != TRANSPARENT_TX_VERSION && tx.nVersion != GROTH_TX_VERSION) {
+			reason = "version";
+			return false;
+		}
+	}
 
     BOOST_FOREACH (const CTxIn& txin, tx.vin) {
         // Biggest 'standard' txin is a 15-of-15 P2SH multisig with compressed
@@ -854,6 +864,63 @@ unsigned int GetP2SHSigOpCount(const CTransaction& tx, const CCoinsViewCache& in
     return nSigOps;
 }
 
+/**
+ * Check a transaction contextually against a set of consensus rules valid at a given block height.
+ *
+ * Notes:
+ * 1. AcceptToMemoryPool calls CheckTransaction and this function.
+ * 2. ProcessNewBlock calls AcceptBlock, which calls CheckBlock (which calls CheckTransaction)
+ *    and ContextualCheckBlock (which calls this function).
+ * 3. The isInitBlockDownload argument is only to assist with testing.
+ */
+bool ContextualCheckTransaction(
+        const CTransaction& tx,
+        CValidationState &state,
+        const int nHeight,
+        const int dosLevel,
+        bool (*isInitBlockDownload)(bool))
+{
+
+	//Valid txs are:
+	// at any height
+	// at height < groth_fork v>=1 txs with PHGR proofs
+	// at height >= groth_fork v=-3 shielded with GROTH proofs and v=1 transparent with joinsplit empty
+
+    // nHeight is the next block height
+	const bool isGROTHActive = Params().isGrothActive(nHeight);
+
+	if(isGROTHActive) {
+		//verify if transaction is transparent or the actual shielded version
+		if(tx.nVersion == TRANSPARENT_TX_VERSION) {
+			//enforce empty joinsplit for transparent txs
+			if(!tx.vjoinsplit.empty()) {
+				return state.DoS(dosLevel, error("ContextualCheckTransaction(): transparent tx but vjoinsplit not empty"),
+									 REJECT_INVALID, "bad-txns-transparent-jsnotempty");
+			}
+			return true;
+		}
+		if(tx.nVersion != GROTH_TX_VERSION) {
+			LogPrintf("ContextualCheckTransaction: rejecting non GROTH (%d) transaction because GROTH is already active at block height %d\n", tx.nVersion, nHeight);
+			return state.DoS(dosLevel,
+	                         error("ContextualCheckTransaction(): groth is already active"),
+	                         REJECT_INVALID, "bad-tx-shielded-version-too-low");
+		}
+		return true;
+
+	} else {
+		if(tx.nVersion < TRANSPARENT_TX_VERSION) {
+			LogPrintf("ContextualCheckTransaction: rejecting non PHGR (%d) transaction because PHGR is still active at block height %d\n", tx.nVersion, nHeight);
+			return state.DoS(0,
+	                         error("ContextualCheckTransaction(): phgr is still active"),
+	                         REJECT_INVALID, "bad-tx-shielded-version-too-low");
+		}
+		return true;
+	}
+
+
+    return true;
+}
+
 bool CheckTransaction(const CTransaction& tx, CValidationState& state, libzcash::ProofVerifier& verifier, bool isZUTXO)
 {
     // Don't count coinbase transactions because mining skews the count
@@ -878,9 +945,8 @@ bool CheckTransaction(const CTransaction& tx, CValidationState& state, libzcash:
 bool CheckTransactionWithoutProofVerification(const CTransaction& tx, CValidationState& state, bool isZUTXO)
 {
     // Basic checks that don't depend on any context
-
     // Check transaction version
-    if (tx.nVersion < MIN_TX_VERSION) {
+    if (tx.nVersion < MIN_OLD_TX_VERSION && tx.nVersion != GROTH_TX_VERSION) {
         return state.DoS(100, error("CheckTransaction(): version too low"),
                          REJECT_INVALID, "bad-txns-version-too-low");
     }
@@ -1089,12 +1155,14 @@ CAmount GetMinRelayFee(const CTransaction& tx, unsigned int nBytes, bool fAllowF
 }
 
 
-bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState& state, const CTransaction& tx, bool fLimitFree, bool* pfMissingInputs, bool fRejectAbsurdFee)
+bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransaction& tx, bool fLimitFree, bool* pfMissingInputs, bool fRejectAbsurdFee)
 {
     AssertLockHeld(cs_main);
     if (pfMissingInputs)
         *pfMissingInputs = false;
 
+    int nextBlockHeight = chainActive.Height() + 1; 
+    
     // Node operator can choose to reject tx by number of transparent inputs
     static_assert(std::numeric_limits<size_t>::max() >= std::numeric_limits<int64_t>::max(), "size_t too small");
     size_t limit = (size_t)GetArg("-mempooltxinputlimit", 0);
@@ -1109,6 +1177,12 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState& state, const CTransa
     auto verifier = libzcash::ProofVerifier::Strict();
     if (!CheckTransaction(tx, state, verifier))
         return error("AcceptToMemoryPool: CheckTransaction failed");
+
+     // DoS level set to 10 to be more forgiving.
+    // Check transaction contextually against the set of consensus rules which apply in the next block to be mined.
+    if (!ContextualCheckTransaction(tx, state, nextBlockHeight, 10)) {
+        return error("AcceptToMemoryPool: ContextualCheckTransaction failed");
+    }
 
     // Coinbase is only valid in a block, not as a loose transaction
     if (tx.IsCoinBase())
@@ -1905,9 +1979,9 @@ bool ContextualCheckInputs(const CTransaction& tx, CValidationState& state, cons
                     return state.DoS(100, false, REJECT_INVALID, strprintf("mandatory-script-verify-flag-failed (%s)", ScriptErrorString(check.GetScriptError())));
                 }
             }
-
-            if (!CheckJoinSplitSigs(tx, state, flags))
-                return false;
+            // Turn off as this is no longer relevant
+            // if (!CheckJoinSplitSigs(tx, state, flags))
+            //     return false;
         }
     }
 
@@ -3662,9 +3736,16 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
 {
     const int nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
     const Consensus::Params& consensusParams = Params().GetConsensus();
+    
 
     // Check that all transactions are finalized
     BOOST_FOREACH (const CTransaction& tx, block.vtx) {
+
+        // Check transaction contextually against consensus rules at block height
+        if (!ContextualCheckTransaction(tx, state, nHeight, 100)) {
+            return false; // Failure reason has been set in validation state object
+        }
+
         int nLockTimeFlags = 0;
         int64_t nLockTimeCutoff = (nLockTimeFlags & LOCKTIME_MEDIAN_TIME_PAST) ? pindexPrev->GetMedianTimePast() : block.GetBlockTime();
         if (!IsFinalTx(tx, nHeight, nLockTimeCutoff)) {

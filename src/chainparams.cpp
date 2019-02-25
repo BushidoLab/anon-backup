@@ -137,6 +137,8 @@ public:
         base58Prefixes[EXT_SECRET_KEY]     = {0x04,0x88,0xAD,0xE4};
         // guarantees the first 2 characters, when base58 encoded, are "zc"
         base58Prefixes[ZCPAYMENT_ADDRRESS] = {0x16,0x9A};
+        // guarantees the first 4 characters, when base58 encoded, are "ZiVK"
+        base58Prefixes[ZCVIEWING_KEY]      = {0xA8,0xAB,0xD3};
         // guarantees the first 2 characters, when base58 encoded, are "SK"
         base58Prefixes[ZCSPENDING_KEY]     = {0xAB,0x36};
 
@@ -167,17 +169,21 @@ public:
         };
 
 
-        //setup airdrop blocks range
+        // Setup airdrop blocks range
         nForkStartHeight = 3;
         nForkHeightRange = 16737;
         nZtransparentStartBlock = 9893 + nForkStartHeight;
         nZshieldedStartBlock = 10132 + nForkStartHeight;
 
-        // masternode related
+        // Masternode related
         masternodeCollateralChangeBlock = 37000;
         masternodeCollateralOld = 500; 
         masternodeCollateralNew = 10000;
 
+        //Sapling
+        saplingActivationBlock = 50000;
+
+        // Equihash algo
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
         eh_epoch_1_endblock = nForkStartHeight + nForkHeightRange;
@@ -265,6 +271,14 @@ public:
         nForkHeightRange = 1;
         nZtransparentStartBlock = 5;
         nZshieldedStartBlock = 6;
+
+        // Masternode related
+        masternodeCollateralChangeBlock = 1;
+        masternodeCollateralOld = 500; 
+        masternodeCollateralNew = 10000;
+
+        //Sapling
+        saplingActivationBlock = 2200;
         
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
@@ -306,6 +320,8 @@ public:
         base58Prefixes[EXT_SECRET_KEY]     = {0x04,0x35,0x83,0x94};
         // guarantees the first 2 characters, when base58 encoded, are "zt"
         base58Prefixes[ZCPAYMENT_ADDRRESS] = {0x16,0xB6};
+        // guarantees the first 4 characters, when base58 encoded, are "ZiVt"
+        base58Prefixes[ZCVIEWING_KEY]      = {0xA8,0xAC,0x0C};
         // guarantees the first 2 characters, when base58 encoded, are "ST"
         base58Prefixes[ZCSPENDING_KEY]     = {0xAC,0x08};
 
@@ -530,4 +546,9 @@ int CChainParams::GetMasternodeCollateral(int nHeight) const {
         if(nHeight >= masternodeCollateralChangeBlock)
             return masternodeCollateralNew;
         return masternodeCollateralOld;
+}
+
+bool CChainParams::isGrothActive(int nHeight) const {
+        assert(saplingActivationBlock > 0);
+        return nHeight >= saplingActivationBlock;
 }
