@@ -96,7 +96,7 @@ if BUILD_BITCOIND
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += zcash-cli zcash-tx
+  bin_PROGRAMS += anon-cli zcash-tx
 endif
 
 LIBZCASH_H = \

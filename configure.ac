@@ -825,8 +825,23 @@ if test x$BUILD_OS = xdarwin; then
   AX_CHECK_COMPILE_FLAG([-Wno-undefined-var-template],[CXXFLAGS="$CXXFLAGS -Wno-undefined-var-template"],,[[$CXXFLAG_WERROR]])
 fi
 
+# libsnark header layout is broken unless cpp's -I is passed with the
+# libsnark directory, so for now we use this hideous workaround:
+echo 'Hunting for libsnark include directory...'
+[LIBSNARK_INCDIR="$(echo "$CPPFLAGS" | sed 's,^.*-I\([^ ]*/include\).*$,\1/libsnark,')"]
+if test -d "$LIBSNARK_INCDIR"; then
+   echo "Found libsnark include directory: $LIBSNARK_INCDIR"
+else
+    AC_MSG_ERROR(libsnark include directory not found)
+fi
 
-LIBZCASH_LIBS="-lgmp -lgmpxx -lboost_system-mt -lcrypto -lsodium $RUST_LIBS"
+CPPFLAGS="-I$LIBSNARK_INCDIR $CPPFLAGS"
+
+# # Now check for libsnark compilability using traditional autoconf tests:
+AC_CHECK_HEADER([libsnark/gadgetlib1/gadget.hpp],,AC_MSG_ERROR(libsnark headers missing))
+AC_CHECK_LIB([snark],[main],LIBSNARK_LIBS=-lsnark, [AC_MSG_ERROR(libsnark missing)], [-lgmpxx])
+
+LIBZCASH_LIBS="-lsnark -lgmp -lgmpxx -lboost_system-mt -lcrypto -lsodium $RUST_LIBS"
 
 
 AC_MSG_CHECKING([whether to build bitcoind])
