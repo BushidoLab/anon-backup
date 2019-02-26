@@ -2579,7 +2579,7 @@ UniValue zc_benchmark(const UniValue& params, bool fHelp)
     }
 
 	const bool isGROTHActive = Params().isGrothActive(chainActive.Height());
-    LogPrintf("shieldedTxVersion (Forkmanager): %d\n", isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION);
+    LogPrintf("shieldedTxVersion: %d\n", isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION);
 
     LOCK(cs_main);
 
@@ -3806,8 +3806,8 @@ UniValue z_shieldcoinbase(const UniValue& params, bool fHelp)
 
     const bool isGROTHActive = Params().isGrothActive(chainActive.Height() + 1);
     const int shieldedTxVersion = isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION;
-    
-    LogPrintf("z_shieldcoinbase shieldedTxVersion (Forkmanager): %d\n", shieldedTxVersion);
+
+    LogPrintf("z_shieldcoinbase shieldedTxVersion: %d\n", shieldedTxVersion);
 
     // Contextual transaction we will build on
     // (used if no Sapling addresses are involved)
