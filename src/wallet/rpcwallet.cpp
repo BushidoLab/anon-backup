@@ -2869,9 +2869,10 @@ UniValue zc_raw_joinsplit(const UniValue& params, bool fHelp)
     crypto_sign_keypair(joinSplitPubKey.begin(), joinSplitPrivKey);
 
     CMutableTransaction mtx(tx);
-    // TODO 
-    // const int shieldedTxVersion = ForkManager::getInstance().getShieldedTxVersion(chainActive.Height() + 1);
-    const int shieldedTxVersion = GROTH_TX_VERSION;
+
+    const bool isGROTHActive = Params().isGrothActive(chainActive.Height() + 1);
+    const int shieldedTxVersion = isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION;
+
     mtx.nVersion = shieldedTxVersion;
     mtx.joinSplitPubKey = joinSplitPubKey;
     JSDescription jsdesc(mtx.nVersion == GROTH_TX_VERSION,
@@ -3436,9 +3437,10 @@ UniValue z_sendmany(const UniValue& params, bool fHelp)
 {
     if (!EnsureWalletIsAvailable(fHelp))
         return NullUniValue;
-    // TODO
-    // const int shieldedTxVersion = ForkManager::getInstance().getShieldedTxVersion(chainActive.Height() + 1);
-    const int shieldedTxVersion = GROTH_TX_VERSION;
+
+    const bool isGROTHActive = Params().isGrothActive(chainActive.Height() + 1);
+    const int shieldedTxVersion = isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION;
+
     LogPrintf("z_sendmany shieldedTxVersion: %d\n", shieldedTxVersion);
 
     if (fHelp || params.size() < 2 || params.size() > 4)
@@ -3802,9 +3804,9 @@ UniValue z_shieldcoinbase(const UniValue& params, bool fHelp)
     contextInfo.push_back(Pair("toaddress", params[1]));
     contextInfo.push_back(Pair("fee", ValueFromAmount(nFee)));
 
-    // TODO CALYPSO
-    // const int shieldedTxVersion = ForkManager::getInstance().getShieldedTxVersion(chainActive.Height() + 1);
-    const int shieldedTxVersion = GROTH_TX_VERSION;
+    const bool isGROTHActive = Params().isGrothActive(chainActive.Height() + 1);
+    const int shieldedTxVersion = isGROTHActive ? GROTH_TX_VERSION: PHGR_TX_VERSION;
+    
     LogPrintf("z_shieldcoinbase shieldedTxVersion (Forkmanager): %d\n", shieldedTxVersion);
 
     // Contextual transaction we will build on

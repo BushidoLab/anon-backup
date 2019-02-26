@@ -733,7 +733,7 @@ static void ZC_LoadParams()
         uiInterface.ThreadSafeMessageBox(strprintf(
             _("Cannot find the ANON network parameters in the following directory:\n"
               "%s\n"
-              "Please run 'zcash-fetch-params.sh' or './anonutil/fetch-params.sh' and then restart."),
+              "Please run 'fetch-params.sh' or './anonutil/fetch-params.sh' and then restart."),
                 ZC_GetParamsDir()),
             "", CClientUIInterface::MSG_ERROR);
         StartShutdown();
