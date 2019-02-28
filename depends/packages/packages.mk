@@ -38,7 +38,7 @@ rust_crates := \
   crate_zip32
 rust_packages := rust $(rust_crates) librustzcash
 proton_packages := proton
-zcash_packages := libsnark libgmp libsodium
+zcash_packages := libgmp libsodium
 packages := boost openssl libevent zeromq $(zcash_packages) googletest
 native_packages := native_ccache
 

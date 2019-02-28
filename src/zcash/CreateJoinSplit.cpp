@@ -6,7 +6,7 @@
 #include "primitives/transaction.h"
 #include "zcash/JoinSplit.hpp"
 
-#include "snark/libsnark/common/profiling.hpp"
+#include <libsnark/common/profiling.hpp>
 
 using namespace libzcash;
 
