@@ -86,16 +86,16 @@ protected:
         mtx.vout[0].scriptPubKey = CScript() << OP_TRUE;
         mtx.vout[0].nValue = 0;
 
-        CAmount reward = GetBlockSubsidy(height, Params().GetConsensus());
+        // CAmount reward = GetBlockSubsidy(height, Params().GetConsensus());
 
 		// for (Fork::CommunityFundType cfType=Fork::CommunityFundType::FOUNDATION; cfType < Fork::CommunityFundType::ENDTYPE; cfType = Fork::CommunityFundType(cfType + 1)) {
 		// 	CAmount vCommunityFund = ForkManager::getInstance().getCommunityFundReward(height, reward, cfType);
 		// 	if (vCommunityFund > 0) {
-		// 		// Take some reward away from miners
-		// 		mtx.vout[0].nValue -= vCommunityFund;
-		// 		// And give it to the community
-		// 		mtx.vout.push_back(CTxOut(vCommunityFund, Params().GetCommunityFundScriptAtHeight(height, cfType)));
-		// 	}
+				// Take some reward away from miners
+				mtx.vout[0].nValue = 50 * COIN;
+				// And give it to the community
+				// mtx.vout.push_back(CTxOut(vCommunityFund, Params().GetCommunityFundScriptAtHeight(height, cfType)));
+			// }
 		// }
         return mtx;
     }
@@ -238,8 +238,8 @@ protected:
 TEST_F(ContextualTxsCheckBlockTest, BlockShieldRulesRejectOtherTx) {
 
 	TestTxsAcceptanceRules(CBaseChainParams::REGTEST, 200);
-	TestTxsAcceptanceRules(CBaseChainParams::TESTNET, 369900);
-	TestTxsAcceptanceRules(CBaseChainParams::MAIN, 455555);
+	TestTxsAcceptanceRules(CBaseChainParams::TESTNET, 2200);
+	TestTxsAcceptanceRules(CBaseChainParams::MAIN, 50000);
 
 }
 

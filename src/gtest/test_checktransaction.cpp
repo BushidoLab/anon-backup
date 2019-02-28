@@ -79,7 +79,7 @@ CMutableTransaction GetValidTransaction(int txVersion) {
     // Empty output script.
     CScript scriptCode;
     CTransaction signTx(mtx);
-    uint256 dataToBeSigned = SignatureHash(scriptCode, signTx, NOT_AN_INPUT, SIGHASH_ALL);
+    uint256 dataToBeSigned = SignatureHash(scriptCode, signTx, NOT_AN_INPUT, SIGHASH_ALL | SIGHASH_FORKID, FORKID_IN_USE);
     if (dataToBeSigned == one) {
         throw std::runtime_error("SignatureHash failed");
     }

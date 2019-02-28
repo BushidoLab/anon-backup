@@ -395,7 +395,7 @@ public:
         strCurrencyUnits = "REG";
         consensus.fCoinbaseMustBeProtected = false;
         consensus.nSubsidySlowStartInterval = 0;
-        consensus.nSubsidyHalvingInterval = 105000;
+        consensus.nSubsidyHalvingInterval = 2000;
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 1000;
@@ -411,30 +411,48 @@ public:
         consensus.nGovernanceMinQuorum = 3;
         consensus.nGovernanceFilterElements = 20000;
 
+        // Setup airdrop blocks range
+        nForkStartHeight = 0;
+        nForkHeightRange = 0;
+        nZtransparentStartBlock = 0;
+        nZshieldedStartBlock = 0;
+
+        // Equihash algo
+        eh_epoch_1 = eh48_5;
+        eh_epoch_2 = eh48_5;
+        eh_epoch_1_endblock = nForkStartHeight + nForkHeightRange;
+        eh_epoch_2_startblock = nForkStartHeight + nForkHeightRange + 1;
+
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
         consensus.nMinerConfirmationWindow = 144; // Faster than normal for regtest (144 instead of 2016)
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 0;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 999999999999ULL;
 
-        pchMessageStart[0] = 0xaa;
-        pchMessageStart[1] = 0xe8;
-        pchMessageStart[2] = 0x3f;
-        pchMessageStart[3] = 0x5f;
+        pchMessageStart[0] = 0x2f;
+        pchMessageStart[1] = 0x54;
+        pchMessageStart[2] = 0xcc;
+        pchMessageStart[3] = 0x9d;
         nMaxTipAge = 24 * 60 * 60;
 
+        //Sapling
+        saplingActivationBlock = 200;
 
         const size_t N = 48, K = 5;
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
-        genesis.nTime = 1535569200;
+
+        genesis.hashPrevBlock.SetNull();
+        genesis.nTime = 1494548150;
         genesis.nBits = 0x200f0f0f;
-        genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000014");
-        genesis.nSolution = ParseHex("082db3be12af6517f20de6265d02f5c971010ee2e2d784c525b16c21185cce784c5ec38f");
+        genesis.nVersion = 4;
+        genesis.nNonce = uint256S("0x000000000000000000000000000000000000000000000000000000000000003d");
+        genesis.nSolution = ParseHex("00CBA7185285F4FF37432E1F3AA7A569FBC81B5A0876F23DA8D38840B0130C74E68297B5");
         consensus.hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 3130;
-        assert(consensus.hashGenesisBlock == uint256S("0x0405af839b4b9e53bae1f951e76b0e0a33d1ca6901fc264893adb375cc04a410"));
+        // assert(consensus.hashGenesisBlock == uint256S("0x0da5ee723b7923feb580518541c6f098206330dbc711a6678922c11f2ccf1abb"));
+
         nPruneAfterHeight = 1000;
 
         vFixedSeeds.clear(); //! Regtest mode doesn't have any fixed seeds.
@@ -449,14 +467,11 @@ public:
 
         checkpointData = (Checkpoints::CCheckpointData){
             boost::assign::map_list_of
-            ( 0, uint256S("0x0405af839b4b9e53bae1f951e76b0e0a33d1ca6901fc264893adb375cc04a410")),
+            ( 0, uint256S("0x0da5ee723b7923feb580518541c6f098206330dbc711a6678922c11f2ccf1abb")),
             0,
             0,
             0
         };
-
-        nForkStartHeight = 0;
-        nForkHeightRange = 0;
     }
 };
 static CRegTestParams regTestParams;

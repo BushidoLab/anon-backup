@@ -1062,11 +1062,43 @@ bool CheckTransactionWithoutProofVerification(const CTransaction& tx, CValidatio
             return state.DoS(100, error("CheckTransaction(): coinbase script size"),
                              REJECT_INVALID, "bad-cb-length");
         }
-    } else {
-        BOOST_FOREACH (const CTxIn& txin, tx.vin)
+    } 
+    else
+    {
+        BOOST_FOREACH(const CTxIn& txin, tx.vin)
             if (!isZUTXO && txin.prevout.IsNull())
                 return state.DoS(10, error("CheckTransaction(): prevout is null"),
                                  REJECT_INVALID, "bad-txns-prevout-null");
+
+        if (tx.vjoinsplit.size() > 0) {
+            // Empty output script.
+            CScript scriptCode;
+            uint256 dataToBeSigned;
+            const unsigned int flags = STANDARD_SCRIPT_VERIFY_FLAGS;
+            int hashtype = SIGHASH_ALL;
+            if (flags & SCRIPT_VERIFY_FORKID)
+                hashtype |= SIGHASH_FORKID;
+            try {
+                // dataToBeSigned = SignatureHash(scriptCode, tx, NOT_AN_INPUT, SIGHASH_ALL);
+                dataToBeSigned = SignatureHash(scriptCode, tx, NOT_AN_INPUT,
+                                           hashtype, (flags & SCRIPT_VERIFY_FORKID) ? FORKID_IN_USE : FORKID_NONE);
+            } catch (std::logic_error ex) {
+                return state.DoS(100, error("CheckTransaction(): error computing signature hash"),
+                                 REJECT_INVALID, "error-computing-signature-hash");
+            }
+
+            BOOST_STATIC_ASSERT(crypto_sign_PUBLICKEYBYTES == 32);
+
+            // We rely on libsodium to check that the signature is canonical.
+            // https://github.com/jedisct1/libsodium/commit/62911edb7ff2275cccd74bf1c8aefcc4d76924e0
+            if (crypto_sign_verify_detached(&tx.joinSplitSig[0],
+                                            dataToBeSigned.begin(), 32,
+                                            tx.joinSplitPubKey.begin()
+                                           ) != 0) {
+                return state.DoS(100, error("CheckTransaction(): invalid joinsplit signature"),
+                                 REJECT_INVALID, "bad-txns-invalid-joinsplit-signature");
+            }
+        }
     }
 
     return true;
@@ -1218,7 +1250,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransa
             }
         }
         BOOST_FOREACH (const JSDescription& joinsplit, tx.vjoinsplit) {
-            BOOST_FOREACH (const uint256& nf, joinsplit.nullifiers) {
+            BOOST_FOREACH (const uint256 &nf, joinsplit.nullifiers) {
                 if (pool.mapNullifiers.count(nf)) {
                     return false;
                 }
@@ -1819,7 +1851,7 @@ void UpdateCoins(const CTransaction& tx, CValidationState& state, CCoinsViewCach
 
     // spend nullifiers
     BOOST_FOREACH (const JSDescription& joinsplit, tx.vjoinsplit) {
-        BOOST_FOREACH (const uint256& nf, joinsplit.nullifiers) {
+        BOOST_FOREACH (const uint256 &nf, joinsplit.nullifiers) {
             inputs.SetNullifier(nf, true);
         }
     }
@@ -2182,7 +2214,7 @@ bool DisconnectBlock(CBlock& block, CValidationState& state, CBlockIndex* pindex
 
         // unspend nullifiers
         BOOST_FOREACH (const JSDescription& joinsplit, tx.vjoinsplit) {
-            BOOST_FOREACH (const uint256& nf, joinsplit.nullifiers) {
+            BOOST_FOREACH (const uint256 &nf, joinsplit.nullifiers) {
                 view.SetNullifier(nf, false);
             }
         }
@@ -3429,10 +3461,19 @@ CBlockIndex* AddToBlockIndex(const CBlockHeader& block)
 }
 
 /** Mark a block as having its data received and checked (up to BLOCK_VALID_TRANSACTIONS). */
-bool ReceivedBlockTransactions(const CBlock& block, CValidationState& state, CBlockIndex* pindexNew, const CDiskBlockPos& pos)
+bool ReceivedBlockTransactions(const CBlock &block, CValidationState& state, CBlockIndex *pindexNew, const CDiskBlockPos& pos)
 {
     pindexNew->nTx = block.vtx.size();
     pindexNew->nChainTx = 0;
+    CAmount sproutValue = 0;
+    for (auto tx : block.vtx) {
+        for (auto js : tx.vjoinsplit) {
+            sproutValue += js.vpub_old;
+            sproutValue -= js.vpub_new;
+        }
+    }
+    pindexNew->nSproutValue = sproutValue;
+    pindexNew->nChainSproutValue = boost::none;
     pindexNew->nFile = pos.nFile;
     pindexNew->nDataPos = pos.nPos;
     pindexNew->nUndoPos = 0;
@@ -3447,9 +3488,18 @@ bool ReceivedBlockTransactions(const CBlock& block, CValidationState& state, CBl
 
         // Recursively process any descendant blocks that now may be eligible to be connected.
         while (!queue.empty()) {
-            CBlockIndex* pindex = queue.front();
+            CBlockIndex *pindex = queue.front();
             queue.pop_front();
             pindex->nChainTx = (pindex->pprev ? pindex->pprev->nChainTx : 0) + pindex->nTx;
+            if (pindex->pprev) {
+                if (pindex->pprev->nChainSproutValue && pindex->nSproutValue) {
+                    pindex->nChainSproutValue = *pindex->pprev->nChainSproutValue + *pindex->nSproutValue;
+                } else {
+                    pindex->nChainSproutValue = boost::none;
+                }
+            } else {
+                pindex->nChainSproutValue = pindex->nSproutValue;
+            }
             {
                 LOCK(cs_nBlockSequenceId);
                 pindex->nSequenceId = nBlockSequenceId++;
@@ -4318,12 +4368,19 @@ bool static LoadBlockIndexDB()
             if (pindex->pprev) {
                 if (pindex->pprev->nChainTx) {
                     pindex->nChainTx = pindex->pprev->nChainTx + pindex->nTx;
+                    if (pindex->pprev->nChainSproutValue && pindex->nSproutValue) {
+                        pindex->nChainSproutValue = *pindex->pprev->nChainSproutValue + *pindex->nSproutValue;
+                    } else {
+                        pindex->nChainSproutValue = boost::none;
+                    }
                 } else {
                     pindex->nChainTx = 0;
+                    pindex->nChainSproutValue = boost::none;
                     mapBlocksUnlinked.insert(std::make_pair(pindex->pprev, pindex));
                 }
             } else {
                 pindex->nChainTx = pindex->nTx;
+                pindex->nChainSproutValue = pindex->nSproutValue;
             }
         }
         if (pindex->IsValid(BLOCK_VALID_TRANSACTIONS) && (pindex->nChainTx || pindex->pprev == NULL))
