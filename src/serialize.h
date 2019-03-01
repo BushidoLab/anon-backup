@@ -21,9 +21,9 @@
 #include <utility>
 #include <vector>
 
+#include "prevector.h"
 #include <boost/array.hpp>
 #include <boost/optional.hpp>
-#include "prevector.h"
 
 class CScript;
 
@@ -40,15 +40,16 @@ static const unsigned int MAX_SIZE = 0x02000000;
  * deserializing it from s. If T contains const fields, this
  * is likely the only way to do so.
  */
-struct deserialize_type {};
-constexpr deserialize_type deserialize {};
+struct deserialize_type {
+};
+constexpr deserialize_type deserialize{};
 
 
 /**
  * Used to bypass the rule against non-const reference to temporary
  * where it makes sense with wrappers such as CFlatData or CTxDB
  */
-template<typename T>
+template <typename T>
 inline T& REF(const T& val)
 {
     return const_cast<T&>(val);
@@ -58,7 +59,7 @@ inline T& REF(const T& val)
  * Used to acquire a non-const pointer "this" to generate bodies
  * of const serialization operations from a template
  */
-template<typename T>
+template <typename T>
 inline T* NCONST_PTR(const T* val)
 {
     return const_cast<T*>(val);
@@ -70,25 +71,25 @@ inline T* NCONST_PTR(const T* val)
  * vector, as well as that of indexing after the end of the vector.
  */
 template <class T, class TAl>
-inline T* begin_ptr(std::vector<T,TAl>& v)
+inline T* begin_ptr(std::vector<T, TAl>& v)
 {
     return v.empty() ? NULL : &v[0];
 }
 /** Get begin pointer of vector (const version) */
 template <class T, class TAl>
-inline const T* begin_ptr(const std::vector<T,TAl>& v)
+inline const T* begin_ptr(const std::vector<T, TAl>& v)
 {
     return v.empty() ? NULL : &v[0];
 }
 /** Get end pointer of vector (non-const version) */
 template <class T, class TAl>
-inline T* end_ptr(std::vector<T,TAl>& v)
+inline T* end_ptr(std::vector<T, TAl>& v)
 {
     return v.empty() ? NULL : (&v[0] + v.size());
 }
 /** Get end pointer of vector (const version) */
 template <class T, class TAl>
-inline const T* end_ptr(const std::vector<T,TAl>& v)
+inline const T* end_ptr(const std::vector<T, TAl>& v)
 {
     return v.empty() ? NULL : (&v[0] + v.size());
 }
@@ -97,55 +98,65 @@ inline const T* end_ptr(const std::vector<T,TAl>& v)
  * Lowest-level serialization and conversion.
  * @note Sizes of these types are verified in the tests
  */
-template <typename Stream> inline void ser_writedata8(Stream &s, uint8_t obj)
+template <typename Stream>
+inline void ser_writedata8(Stream& s, uint8_t obj)
 {
     s.write((char*)&obj, 1);
 }
-template <typename Stream> inline void ser_writedata16(Stream &s, uint16_t obj)
+template <typename Stream>
+inline void ser_writedata16(Stream& s, uint16_t obj)
 {
     obj = htole16(obj);
     s.write((char*)&obj, 2);
 }
-template <typename Stream> inline void ser_writedata32(Stream &s, uint32_t obj)
+template <typename Stream>
+inline void ser_writedata32(Stream& s, uint32_t obj)
 {
     obj = htole32(obj);
     s.write((char*)&obj, 4);
 }
-template <typename Stream> inline void ser_writedata32be(Stream &s, uint32_t obj)
+template <typename Stream>
+inline void ser_writedata32be(Stream& s, uint32_t obj)
 {
     obj = htobe32(obj);
     s.write((char*)&obj, 4);
 }
-template <typename Stream> inline void ser_writedata64(Stream &s, uint64_t obj)
+template <typename Stream>
+inline void ser_writedata64(Stream& s, uint64_t obj)
 {
     obj = htole64(obj);
     s.write((char*)&obj, 8);
 }
-template <typename Stream> inline uint8_t ser_readdata8(Stream &s)
+template <typename Stream>
+inline uint8_t ser_readdata8(Stream& s)
 {
     uint8_t obj;
     s.read((char*)&obj, 1);
     return obj;
 }
-template <typename Stream> inline uint16_t ser_readdata16(Stream &s)
+template <typename Stream>
+inline uint16_t ser_readdata16(Stream& s)
 {
     uint16_t obj;
     s.read((char*)&obj, 2);
     return le16toh(obj);
 }
-template <typename Stream> inline uint32_t ser_readdata32(Stream &s)
+template <typename Stream>
+inline uint32_t ser_readdata32(Stream& s)
 {
     uint32_t obj;
     s.read((char*)&obj, 4);
     return le32toh(obj);
 }
-template <typename Stream> inline uint32_t ser_readdata32be(Stream &s)
+template <typename Stream>
+inline uint32_t ser_readdata32be(Stream& s)
 {
     uint32_t obj;
     s.read((char*)&obj, 4);
     return be32toh(obj);
 }
-template <typename Stream> inline uint64_t ser_readdata64(Stream &s)
+template <typename Stream>
+inline uint64_t ser_readdata64(Stream& s)
 {
     uint64_t obj;
     s.read((char*)&obj, 8);
@@ -197,9 +208,9 @@ inline float ser_uint32_to_float(uint32_t y)
 
 enum {
     // primary actions
-    SER_NETWORK         = (1 << 0),
-    SER_DISK            = (1 << 1),
-    SER_GETHASH         = (1 << 2),
+    SER_NETWORK = (1 << 0),
+    SER_DISK = (1 << 1),
+    SER_GETHASH = (1 << 2),
 };
 
 #define READWRITE(obj) (::SerReadWrite(s, (obj), nType, nVersion, ser_action))
@@ -706,6 +717,13 @@ void Serialize(Stream& os, const boost::array<T, N>& item, int nType, int nVersi
 template <typename Stream, typename T, std::size_t N>
 void Unserialize(Stream& is, boost::array<T, N>& item, int nType, int nVersion);
 
+template <typename T, std::size_t N>
+unsigned int GetSerializeSize(const std::array<T, N>& item, int nType, int nVersion);
+template <typename Stream, typename T, std::size_t N>
+void Serialize(Stream& os, const std::array<T, N>& item, int nType, int nVersion);
+template <typename Stream, typename T, std::size_t N>
+void Unserialize(Stream& is, std::array<T, N>& item, int nType, int nVersion);
+
 /**
  * pair
  */
@@ -924,7 +942,11 @@ void Serialize_impl(Stream& os, const std::vector<T, A>& v, int nType, int nVers
 {
     WriteCompactSize(os, v.size());
     for (typename std::vector<T, A>::const_iterator vi = v.begin(); vi != v.end(); ++vi)
+#ifdef __APPLE__
+        ::Serialize(os, static_cast<T>(*vi), nType, nVersion);
+#else
         ::Serialize(os, (*vi), nType, nVersion);
+#endif
 }
 
 template <typename Stream, typename T, typename A>
@@ -1069,7 +1091,7 @@ void Unserialize(Stream& is, boost::array<T, N>& item, int nType, int nVersion)
     }
 }
 
-template<typename Stream, typename T, std::size_t N>
+template <typename Stream, typename T, std::size_t N>
 void Unserialize(Stream& is, std::array<T, N>& item, int nType, int nVersion)
 {
     for (size_t i = 0; i < N; i++) {
@@ -1078,8 +1100,8 @@ void Unserialize(Stream& is, std::array<T, N>& item, int nType, int nVersion)
 }
 
 
-template<typename T, std::size_t N>
-unsigned int GetSerializeSize(const std::array<T, N> &item, int nType, int nVersion)
+template <typename T, std::size_t N>
+unsigned int GetSerializeSize(const std::array<T, N>& item, int nType, int nVersion)
 {
     unsigned int size = 0;
     for (size_t i = 0; i < N; i++) {
@@ -1088,7 +1110,7 @@ unsigned int GetSerializeSize(const std::array<T, N> &item, int nType, int nVers
     return size;
 }
 
-template<typename Stream, typename T, std::size_t N>
+template <typename Stream, typename T, std::size_t N>
 void Serialize(Stream& os, const std::array<T, N>& item, int nType, int nVersion)
 {
     for (size_t i = 0; i < N; i++) {
@@ -1208,14 +1230,13 @@ void Serialize(Stream& os, const std::list<T, A>& l, int nType, int nVersion)
         Serialize(os, (*it), nType, nVersion);
 }
 
-template<typename Stream, typename T, typename A>
+template <typename Stream, typename T, typename A>
 void Unserialize(Stream& is, std::list<T, A>& l, int nType, int nVersion)
 {
     l.clear();
     unsigned int nSize = ReadCompactSize(is);
     typename std::list<T, A>::iterator it = l.begin();
-    for (unsigned int i = 0; i < nSize; i++)
-    {
+    for (unsigned int i = 0; i < nSize; i++) {
         T item;
         Unserialize(is, item, nType, nVersion);
         l.push_back(item);
