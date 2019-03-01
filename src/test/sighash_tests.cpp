@@ -161,7 +161,7 @@ void static RandomTransaction(CMutableTransaction &tx, bool fSingle, bool emptyI
         // Empty output script.
         CScript scriptCode;
         CTransaction signTx(tx);
-        uint256 dataToBeSigned = SignatureHash(scriptCode, signTx, NOT_AN_INPUT, SIGHASH_ALL);
+        uint256 dataToBeSigned = SignatureHash(scriptCode, signTx, NOT_AN_INPUT, SIGHASH_ALL | SIGHASH_FORKID, FORKID_IN_USE);
 
         assert(crypto_sign_detached(&tx.joinSplitSig[0], NULL,
                                     dataToBeSigned.begin(), 32,
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(sighash_from_tx)
 		CTransaction::joinsplit_sig_t nullSig = {};
 		txTo.joinSplitSig = nullSig;
 
-		interpreterSH = SignatureHash(scriptCode, txTo, NOT_AN_INPUT, SIGHASH_ALL);
+		interpreterSH = SignatureHash(scriptCode, txTo, NOT_AN_INPUT, SIGHASH_ALL | SIGHASH_FORKID, FORKID_IN_USE);
 
 
 		// Serialize and hash

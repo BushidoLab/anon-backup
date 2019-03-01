@@ -139,7 +139,7 @@ TEST(wallet_tests, find_unspent_notes) {
     SelectParams(CBaseChainParams::TESTNET);
     CWallet wallet;
     auto sk = libzcash::SpendingKey::random();
-    wallet.AddSpendingKey(sk);
+    EXPECT_TRUE(wallet.AddSpendingKey(sk));
 
     auto wtx = GetValidReceive(sk, 10, true);
     auto note = GetNote(sk, wtx, 0, 1);
@@ -151,7 +151,7 @@ TEST(wallet_tests, find_unspent_notes) {
     noteData[jsoutpt] = nd;
 
     wtx.SetNoteData(noteData);
-    wallet.AddToWallet(wtx, true, NULL);
+    EXPECT_TRUE(wallet.AddToWallet(wtx, true, NULL));
     EXPECT_FALSE(wallet.IsSpent(nullifier));
 
     // We currently have an unspent and unconfirmed note in the wallet (depth of -1)
@@ -176,7 +176,7 @@ TEST(wallet_tests, find_unspent_notes) {
     EXPECT_EQ(0, chainActive.Height());
 
     wtx.SetMerkleBranch(block);
-    wallet.AddToWallet(wtx, true, NULL);
+    EXPECT_TRUE(wallet.AddToWallet(wtx, true, NULL));
     EXPECT_FALSE(wallet.IsSpent(nullifier));
 
 
@@ -471,8 +471,8 @@ TEST(wallet_tests, nullifier_is_spent) {
     EXPECT_TRUE(chainActive.Contains(&fakeIndex));
     EXPECT_EQ(0, chainActive.Height());
 
-    wtx2.SetMerkleBranch(block);
-    wallet.AddToWallet(wtx2, true, NULL);
+    EXPECT_EQ(33, wtx2.SetMerkleBranch(block));
+    EXPECT_TRUE(wallet.AddToWallet(wtx2, true, NULL));
     EXPECT_TRUE(wallet.IsSpent(nullifier));
 
     // Tear down

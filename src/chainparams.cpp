@@ -261,14 +261,17 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
+        consensus.nForkStartHeight = -1;
+        consensus.nForkHeightRange = -1;
+
         pchMessageStart[0] = 0xf1;
         pchMessageStart[1] = 0xa3;
         pchMessageStart[2] = 0x39;
         pchMessageStart[3] = 0xbc;
 
         //setup airdrop blocks range
-        nForkStartHeight = 2;
-        nForkHeightRange = 1;
+        nForkStartHeight = -1;
+        nForkHeightRange = -1;
         nZtransparentStartBlock = 5;
         nZshieldedStartBlock = 6;
 
