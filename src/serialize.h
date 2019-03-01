@@ -48,7 +48,7 @@ constexpr deserialize_type deserialize {};
  * Used to bypass the rule against non-const reference to temporary
  * where it makes sense with wrappers such as CFlatData or CTxDB
  */
-template <typename T>
+template<typename T>
 inline T& REF(const T& val)
 {
     return const_cast<T&>(val);
@@ -58,7 +58,7 @@ inline T& REF(const T& val)
  * Used to acquire a non-const pointer "this" to generate bodies
  * of const serialization operations from a template
  */
-template <typename T>
+template<typename T>
 inline T* NCONST_PTR(const T* val)
 {
     return const_cast<T*>(val);
@@ -97,65 +97,55 @@ inline const T* end_ptr(const std::vector<T,TAl>& v)
  * Lowest-level serialization and conversion.
  * @note Sizes of these types are verified in the tests
  */
-template <typename Stream>
-inline void ser_writedata8(Stream& s, uint8_t obj)
+template <typename Stream> inline void ser_writedata8(Stream &s, uint8_t obj)
 {
     s.write((char*)&obj, 1);
 }
-template <typename Stream>
-inline void ser_writedata16(Stream& s, uint16_t obj)
+template <typename Stream> inline void ser_writedata16(Stream &s, uint16_t obj)
 {
     obj = htole16(obj);
     s.write((char*)&obj, 2);
 }
-template <typename Stream>
-inline void ser_writedata32(Stream& s, uint32_t obj)
+template <typename Stream> inline void ser_writedata32(Stream &s, uint32_t obj)
 {
     obj = htole32(obj);
     s.write((char*)&obj, 4);
 }
-template <typename Stream>
-inline void ser_writedata32be(Stream& s, uint32_t obj)
+template <typename Stream> inline void ser_writedata32be(Stream &s, uint32_t obj)
 {
     obj = htobe32(obj);
     s.write((char*)&obj, 4);
 }
-template <typename Stream>
-inline void ser_writedata64(Stream& s, uint64_t obj)
+template <typename Stream> inline void ser_writedata64(Stream &s, uint64_t obj)
 {
     obj = htole64(obj);
     s.write((char*)&obj, 8);
 }
-template <typename Stream>
-inline uint8_t ser_readdata8(Stream& s)
+template <typename Stream> inline uint8_t ser_readdata8(Stream &s)
 {
     uint8_t obj;
     s.read((char*)&obj, 1);
     return obj;
 }
-template <typename Stream>
-inline uint16_t ser_readdata16(Stream& s)
+template <typename Stream> inline uint16_t ser_readdata16(Stream &s)
 {
     uint16_t obj;
     s.read((char*)&obj, 2);
     return le16toh(obj);
 }
-template <typename Stream>
-inline uint32_t ser_readdata32(Stream& s)
+template <typename Stream> inline uint32_t ser_readdata32(Stream &s)
 {
     uint32_t obj;
     s.read((char*)&obj, 4);
     return le32toh(obj);
 }
-template <typename Stream>
-inline uint32_t ser_readdata32be(Stream& s)
+template <typename Stream> inline uint32_t ser_readdata32be(Stream &s)
 {
     uint32_t obj;
     s.read((char*)&obj, 4);
     return be32toh(obj);
 }
-template <typename Stream>
-inline uint64_t ser_readdata64(Stream& s)
+template <typename Stream> inline uint64_t ser_readdata64(Stream &s)
 {
     uint64_t obj;
     s.read((char*)&obj, 8);
@@ -207,9 +197,9 @@ inline float ser_uint32_to_float(uint32_t y)
 
 enum {
     // primary actions
-    SER_NETWORK = (1 << 0),
-    SER_DISK = (1 << 1),
-    SER_GETHASH = (1 << 2),
+    SER_NETWORK         = (1 << 0),
+    SER_DISK            = (1 << 1),
+    SER_GETHASH         = (1 << 2),
 };
 
 #define READWRITE(obj) (::SerReadWrite(s, (obj), nType, nVersion, ser_action))
