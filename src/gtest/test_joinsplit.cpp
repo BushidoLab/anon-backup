@@ -337,207 +337,207 @@ void increment_note_witnesses(
     witnesses.push_back(tree.witness());
 }
 
-// TEST(joinsplit, full_api_test)
-// {
-//     {
-//         std::vector<ZCIncrementalWitness> witnesses;
-//         ZCIncrementalMerkleTree tree;
-//         increment_note_witnesses(uint256(), witnesses, tree);
-//         SpendingKey sk = SpendingKey::random();
-//         PaymentAddress addr = sk.address();
-//         Note note1(addr.a_pk, 100, random_uint256(), random_uint256());
-//         increment_note_witnesses(note1.cm(), witnesses, tree);
-//         Note note2(addr.a_pk, 100, random_uint256(), random_uint256());
-//         increment_note_witnesses(note2.cm(), witnesses, tree);
-//         Note note3(addr.a_pk, 2100000000000001, random_uint256(), random_uint256());
-//         increment_note_witnesses(note3.cm(), witnesses, tree);
-//         Note note4(addr.a_pk, 1900000000000000, random_uint256(), random_uint256());
-//         increment_note_witnesses(note4.cm(), witnesses, tree);
-//         Note note5(addr.a_pk, 1900000000000000, random_uint256(), random_uint256());
-//         increment_note_witnesses(note5.cm(), witnesses, tree);
+TEST(joinsplit, full_api_test)
+{
+    {
+        std::vector<ZCIncrementalWitness> witnesses;
+        ZCIncrementalMerkleTree tree;
+        increment_note_witnesses(uint256(), witnesses, tree);
+        SpendingKey sk = SpendingKey::random();
+        PaymentAddress addr = sk.address();
+        Note note1(addr.a_pk, 100, random_uint256(), random_uint256());
+        increment_note_witnesses(note1.cm(), witnesses, tree);
+        Note note2(addr.a_pk, 100, random_uint256(), random_uint256());
+        increment_note_witnesses(note2.cm(), witnesses, tree);
+        Note note3(addr.a_pk, 2100000000000001, random_uint256(), random_uint256());
+        increment_note_witnesses(note3.cm(), witnesses, tree);
+        Note note4(addr.a_pk, 1900000000000000, random_uint256(), random_uint256());
+        increment_note_witnesses(note4.cm(), witnesses, tree);
+        Note note5(addr.a_pk, 1900000000000000, random_uint256(), random_uint256());
+        increment_note_witnesses(note5.cm(), witnesses, tree);
 
-//         // Should work
-//         invokeAPI(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root());
+        // Should work
+        invokeAPI(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root());
 
-//         // lhs > MAX_MONEY
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         2100000000000001,
-//         0,
-//         tree.root(),
-//         "nonsensical vpub_old value");
+        // lhs > MAX_MONEY
+        invokeAPIFailure(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        2100000000000001,
+        0,
+        tree.root(),
+        "nonsensical vpub_old value");
 
-//         // rhs > MAX_MONEY
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         2100000000000001,
-//         tree.root(),
-//         "nonsensical vpub_new value");
+        // rhs > MAX_MONEY
+        invokeAPIFailure(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        2100000000000001,
+        tree.root(),
+        "nonsensical vpub_new value");
 
-//         // input witness for the wrong element
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(witnesses[0], note1, sk),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         100,
-//         tree.root(),
-//         "witness of wrong element for joinsplit input");
+        // input witness for the wrong element
+        invokeAPIFailure(params,
+        {
+            JSInput(witnesses[0], note1, sk),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        100,
+        tree.root(),
+        "witness of wrong element for joinsplit input");
 
-//         // input witness doesn't match up with
-//         // real root
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(witnesses[1], note1, sk),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         100,
-//         uint256(),
-//         "joinsplit not anchored to the correct root");
+        // input witness doesn't match up with
+        // real root
+        invokeAPIFailure(params,
+        {
+            JSInput(witnesses[1], note1, sk),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        100,
+        uint256(),
+        "joinsplit not anchored to the correct root");
 
-//         // input is in the tree now! this should work
-//         invokeAPI(params,
-//         {
-//             JSInput(witnesses[1], note1, sk),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         100,
-//         tree.root());
+        // input is in the tree now! this should work
+        invokeAPI(params,
+        {
+            JSInput(witnesses[1], note1, sk),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        100,
+        tree.root());
 
-//         // Wrong secret key
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(witnesses[1], note1, SpendingKey::random()),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "input note not authorized to spend with given key");
+        // Wrong secret key
+        invokeAPIFailure(params,
+        {
+            JSInput(witnesses[1], note1, SpendingKey::random()),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root(),
+        "input note not authorized to spend with given key");
 
-//         // Absurd input value
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(witnesses[3], note3, sk),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "nonsensical input note value");
+        // Absurd input value
+        invokeAPIFailure(params,
+        {
+            JSInput(witnesses[3], note3, sk),
+            JSInput()
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root(),
+        "nonsensical input note value");
 
-//         // Absurd total input value
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(witnesses[4], note4, sk),
-//             JSInput(witnesses[5], note5, sk)
-//         },
-//         {
-//             JSOutput(),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "nonsensical left hand size of joinsplit balance");
+        // Absurd total input value
+        invokeAPIFailure(params,
+        {
+            JSInput(witnesses[4], note4, sk),
+            JSInput(witnesses[5], note5, sk)
+        },
+        {
+            JSOutput(),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root(),
+        "nonsensical left hand size of joinsplit balance");
 
-//         // Absurd output value
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(addr, 2100000000000001),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "nonsensical output value");
+        // Absurd output value
+        invokeAPIFailure(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(addr, 2100000000000001),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root(),
+        "nonsensical output value");
 
-//         // Absurd total output value
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(addr, 1900000000000000),
-//             JSOutput(addr, 1900000000000000)
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "nonsensical right hand side of joinsplit balance");
+        // Absurd total output value
+        invokeAPIFailure(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(addr, 1900000000000000),
+            JSOutput(addr, 1900000000000000)
+        },
+        0,
+        0,
+        tree.root(),
+        "nonsensical right hand side of joinsplit balance");
 
-//         // Absurd total output value
-//         invokeAPIFailure(params,
-//         {
-//             JSInput(),
-//             JSInput()
-//         },
-//         {
-//             JSOutput(addr, 1900000000000000),
-//             JSOutput()
-//         },
-//         0,
-//         0,
-//         tree.root(),
-//         "invalid joinsplit balance");
-//     }
+        // Absurd total output value
+        invokeAPIFailure(params,
+        {
+            JSInput(),
+            JSInput()
+        },
+        {
+            JSOutput(addr, 1900000000000000),
+            JSOutput()
+        },
+        0,
+        0,
+        tree.root(),
+        "invalid joinsplit balance");
+    }
 
-//     test_full_api(params);
-// }
+    test_full_api(params);
+}
 
 TEST(joinsplit, note_plaintexts)
 {
