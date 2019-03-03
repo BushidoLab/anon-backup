@@ -445,17 +445,13 @@ public:
         BOOST_STATIC_ASSERT(equihash_parameters_acceptable(N, K));
         nEquihashN = N;
         nEquihashK = K;
-
-        genesis.hashPrevBlock.SetNull();
-        genesis.nTime = 1494548150;
+        genesis.nTime = 1535569200;
         genesis.nBits = 0x200f0f0f;
-        genesis.nVersion = 4;
-        genesis.nNonce = uint256S("0x000000000000000000000000000000000000000000000000000000000000003d");
-        genesis.nSolution = ParseHex("00CBA7185285F4FF37432E1F3AA7A569FBC81B5A0876F23DA8D38840B0130C74E68297B5");
+        genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000014");
+        genesis.nSolution = ParseHex("082db3be12af6517f20de6265d02f5c971010ee2e2d784c525b16c21185cce784c5ec38f");
         consensus.hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 3130;
-        // assert(consensus.hashGenesisBlock == uint256S("0x0da5ee723b7923feb580518541c6f098206330dbc711a6678922c11f2ccf1abb"));
-
+        assert(consensus.hashGenesisBlock == uint256S("0x0405af839b4b9e53bae1f951e76b0e0a33d1ca6901fc264893adb375cc04a410"));
         nPruneAfterHeight = 1000;
 
         vFixedSeeds.clear(); //! Regtest mode doesn't have any fixed seeds.
@@ -470,7 +466,7 @@ public:
 
         checkpointData = (Checkpoints::CCheckpointData){
             boost::assign::map_list_of
-            ( 0, uint256S("0x0da5ee723b7923feb580518541c6f098206330dbc711a6678922c11f2ccf1abb")),
+            ( 0, uint256S("0x0405af839b4b9e53bae1f951e76b0e0a33d1ca6901fc264893adb375cc04a410")),
             0,
             0,
             0
