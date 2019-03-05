@@ -26,7 +26,7 @@ class WalletGrothTxTest (BitcoinTestFramework):
         self.sync_all()
 
     def run_test (self):
-        BLOCK_REWARD_BELOW_100 = 11.4375
+        BLOCK_REWARD_BELOW_100 = 50.00
         
         self.nodes[0].generate(100)
         self.sync_all()
