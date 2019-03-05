@@ -3270,7 +3270,7 @@ UniValue z_gettotalbalance(const UniValue& params, bool fHelp)
     if (!EnsureWalletIsAvailable(fHelp))
         return NullUniValue;
 
-    if (fHelp || params.size() > 1)
+    if (fHelp || params.size() > 2)
         throw runtime_error(
             "z_gettotalbalance ( minconf )\n"
             "\nReturn the total value of funds stored in the node’s wallet.\n"

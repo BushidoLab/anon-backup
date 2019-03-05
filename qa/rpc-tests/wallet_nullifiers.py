@@ -176,13 +176,15 @@ class WalletNullifiersTest (BitcoinTestFramework):
         assert_equal(self.nodes[2].z_getbalance(myzaddr), zaddrremaining2)
         # Test viewing keys
         # 285.9375 = 25 * 11.4375
-        node3mined = Decimal('285.9375')
-        # assert_equal({k: Decimal(v) for k, v in self.nodes[3].z_gettotalbalance().items()}, {
-        #     'transparent': node3mined,
-        #     'private': zsendmany2notevalue,
-        #     'masternode_collaterals': 0.00,
-        #     'total': node3mined + zsendmany2notevalue,
-        # })
+        node3mined = Decimal('0.00')
+        assert_equal({k: Decimal(v) for k, v in self.nodes[3].z_gettotalbalance().items()}, {
+            'transparent': node3mined,
+            'private': zsendmany2notevalue,
+            'masternode_collaterals': 0.00,
+            'immature_balance': 0.00000000,
+            'total': node3mined + zsendmany2notevalue,
+            
+        })
 
         # add node 1 address and node 2 viewing key to node 3
         myzvkey = self.nodes[2].z_exportviewingkey(myzaddr)
@@ -203,6 +205,8 @@ class WalletNullifiersTest (BitcoinTestFramework):
         assert_equal({k: Decimal(v) for k, v in self.nodes[3].z_gettotalbalance().items()}, {
             'transparent': node3mined,
             'private': zsendmany2notevalue,
+            'masternode_collaterals': 0.00,
+            'immature_balance': 0.00000000,
             'total': node3mined + zsendmany2notevalue,
         })
 
@@ -213,6 +217,8 @@ class WalletNullifiersTest (BitcoinTestFramework):
         assert_equal({k: Decimal(v) for k, v in self.nodes[3].z_gettotalbalance(1, True).items()}, {
             'transparent': node3mined + Decimal('1.0'),
             'private': zsendmany2notevalue + zsendmanynotevalue + zaddrremaining + zaddrremaining2,
+            'masternode_collaterals': 0.00,
+            'immature_balance': 0.00000000,
             'total': node3mined + Decimal('1.0') + zsendmany2notevalue + zsendmanynotevalue + zaddrremaining + zaddrremaining2,
         })
 
