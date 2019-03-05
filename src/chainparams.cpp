@@ -410,6 +410,12 @@ public:
         //masternode
         consensus.nMasternodeMinimumConfirmations = 1;
 
+        // Budget related
+        consensus.nBudgetPaymentsStartBlock = 5000;
+        consensus.nBudgetPaymentsCycleBlocks = 1000;
+        consensus.nSuperblockStartBlock = 6000; // NOTE: Should satisfy nSuperblockStartBlock > nBudgetPaymentsStartBlock
+        consensus.nSuperblockCycle = 1000;
+
         // governance
         consensus.nGovernanceMinQuorum = 3;
         consensus.nGovernanceFilterElements = 20000;
