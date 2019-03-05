@@ -308,6 +308,7 @@ extern UniValue getblocksubsidy(const UniValue& params, bool fHelp);
 
 extern UniValue z_exportkey(const UniValue& params, bool fHelp); // in rpcdump.cpp
 extern UniValue z_importkey(const UniValue& params, bool fHelp); // in rpcdump.cpp
+extern UniValue z_importviewingkey(const UniValue& params, bool fHelp); // in rpcdump.cpp
 extern UniValue z_exportviewingkey(const UniValue& params, bool fHelp); // in rpcdump.cpp
 extern UniValue z_getnewaddress(const UniValue& params, bool fHelp); // in rpcwallet.cpp
 extern UniValue z_listaddresses(const UniValue& params, bool fHelp); // in rpcwallet.cpp
