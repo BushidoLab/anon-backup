@@ -79,6 +79,7 @@ def initialize_datadir(dirname, n):
         os.makedirs(datadir)
     with open(os.path.join(datadir, "anon.conf"), 'w') as f:
         f.write("regtest=1\n");
+        f.write("debug=1\n");
         f.write("txindex=1\n");
         f.write("showmetrics=0\n");
         f.write("rpcuser=rt\n");
