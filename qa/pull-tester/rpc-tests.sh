@@ -12,7 +12,7 @@ export BITCOIND=${REAL_BITCOIND}
 
 testScripts=(
     # 'paymentdisclosure.py'
-    # 'prioritisetransaction.py'
+    # 'prioritisetransaction.py' #broken
     # 'wallet_treestate.py'
     # 'wallet_protectcoinbase.py' 
     # 'wallet_shieldcoinbase.py'
@@ -22,23 +22,23 @@ testScripts=(
     # 'wallet_grothtx.py'
     # 'listtransactions.py' 
     # 'mempool_resurrect_test.py' 
-    # 'txn_doublespend.py'
-    # 'txn_doublespend.py --mineblock'
-    'getchaintips.py' 
+    # 'txn_doublespend.py'  #broken
+    # 'txn_doublespend.py --mineblock' #broken
+    # 'getchaintips.py' 
     # 'rawtransactions.py' 
     # 'rest.py' 
     # 'mempool_spendcoinbase.py'
-    # 'mempool_coinbase_spends.py'
-    # 'mempool_tx_input_limit.py'
+    # 'mempool_coinbase_spends.py' #broken
+    # 'mempool_tx_input_limit.py' #broken
     # 'httpbasics.py' 
     # 'zapwallettxes.py' 
     # 'proxy_test.py' 
     # 'merkle_blocks.py'
-    # 'fundrawtransaction.py' #FAIL
+    # 'fundrawtransaction.py' 
     # 'signrawtransactions.py'
     # 'walletbackup.py' 
     # 'key_import_export.py'  
-    # 'nodehandling.py' 
+    'nodehandling.py' 
     # 'reindex.py' 
     # 'decodescript.py'
     # 'disablewallet.py' 
@@ -70,8 +70,7 @@ testScriptsExt=(
 );
 
 if [ "x$ENABLE_ZMQ" = "x1" ]; then
-#   testScripts+=('zmq_test.py')
-echo -e "nothing"
+  testScripts+=('zmq_test.py')
 fi
 
 if [ "x$ENABLE_PROTON" = "x1" ]; then

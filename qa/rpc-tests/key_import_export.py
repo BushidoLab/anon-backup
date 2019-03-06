@@ -77,6 +77,7 @@ class KeyImportExportTest (BitcoinTestFramework):
 
         logging.info("Exporting privkey from bob...")
         privkey = bob.dumpprivkey(addr)
+        print('priv key is: ', privkey)
 
         logging.info("Sending post-export txns...")
         for amount in amounts[2:4]:
