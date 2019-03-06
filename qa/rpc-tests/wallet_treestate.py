@@ -41,13 +41,13 @@ class WalletTreeStateTest (BitcoinTestFramework):
                 if status == "failed":
                     errormsg = results[0]['error']['message']
                 break
-        print('...returned status: {}'.format(status))
-        print('...error msg: {}'.format(errormsg))
+        # print('...returned status: {}'.format(status))
+        # print('...error msg: {}'.format(errormsg))
         assert_equal(in_status, status)
         if errormsg is not None:
             assert(in_errormsg is not None)
             assert_equal(in_errormsg in errormsg, True)
-            print('...returned error: {}'.format(errormsg))
+            # print('...returned error: {}'.format(errormsg))
 
     def run_test (self):
         print "Mining blocks..."

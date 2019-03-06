@@ -51,12 +51,12 @@ class WalletShieldCoinbaseTest (BitcoinTestFramework):
                 elif status == "success":
                     txid = results[0]['result']['txid']
                 break
-        print('...returned status: {}'.format(status))
+        # print('...returned status: {}'.format(status))
         assert_equal(in_status, status)
         if errormsg is not None:
             assert(in_errormsg is not None)
             assert_equal(in_errormsg in errormsg, True)
-            print('...returned error: {}'.format(errormsg))
+            # print('...returned error: {}'.format(errormsg))
         return txid
 
     def run_test (self):

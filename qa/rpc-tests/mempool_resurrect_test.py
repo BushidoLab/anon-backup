@@ -32,6 +32,7 @@ class MempoolCoinbaseTest(BitcoinTestFramework):
         return signresult["hex"]
 
     def run_test(self):
+        self.nodes[0].generate(104)
         node0_address = self.nodes[0].getnewaddress()
         # Spend block 1/2/3's coinbase transactions
         # Mine a block.
