@@ -22,9 +22,9 @@ testScripts=(
     # 'wallet_grothtx.py'
     # 'listtransactions.py' 
     # 'mempool_resurrect_test.py' 
-    'txn_doublespend.py'
-    'txn_doublespend.py --mineblock'
-    # 'getchaintips.py' 
+    # 'txn_doublespend.py'
+    # 'txn_doublespend.py --mineblock'
+    'getchaintips.py' 
     # 'rawtransactions.py' 
     # 'rest.py' 
     # 'mempool_spendcoinbase.py'
@@ -70,7 +70,8 @@ testScriptsExt=(
 );
 
 if [ "x$ENABLE_ZMQ" = "x1" ]; then
-  testScripts+=('zmq_test.py')
+#   testScripts+=('zmq_test.py')
+echo -e "nothing"
 fi
 
 if [ "x$ENABLE_PROTON" = "x1" ]; then

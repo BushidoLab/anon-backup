@@ -23,24 +23,32 @@ class TxnMallTest(BitcoinTestFramework):
         return super(TxnMallTest, self).setup_network(True)
 
     def run_test(self):
-        # self.nodes[0].generate(125)
-        # self.sync_all()
-        # self.nodes[1].generate(125)
-        # self.sync_all()
-        # self.nodes[2].generate(125)
-        # self.sync_all()
-        # self.nodes[3].generate(125)
-        # self.sync_all()
+        self.nodes[0].getnewaddress("")
+        self.nodes[0].generate(25)
+        self.sync_all()
+
+        self.nodes[1].getnewaddress("")
+        self.nodes[1].generate(25)
+        self.sync_all()
+
+        self.nodes[2].getnewaddress("")
+        self.nodes[2].generate(25)
+        self.sync_all()
+
+        self.nodes[3].getnewaddress("")
+        self.nodes[3].generate(125)
+        self.sync_all()
 
         mining_reward = Decimal("50.00")
         mining_reward_2 = Decimal("49.00")
         starting_balance = mining_reward * 25
 
         for i in range(4):
+            print('i: ', i)
             print('real: ', self.nodes[i].getbalance())
             print('expected', starting_balance)
             assert_equal(self.nodes[i].getbalance(), starting_balance)
-            self.nodes[i].getnewaddress("")  # bug workaround, coins generated assigned to first getnewaddress!
+            # self.nodes[i].getnewaddress("")  # bug workaround, coins generated assigned to first getnewaddress!
 
         # Coins are sent to node1_address
         node1_address = self.nodes[1].getnewaddress("")

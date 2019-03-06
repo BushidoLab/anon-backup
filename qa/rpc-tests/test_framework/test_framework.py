@@ -166,10 +166,10 @@ class ComparisonTestFramework(BitcoinTestFramework):
 
     def add_options(self, parser):
         parser.add_option("--testbinary", dest="testbinary",
-                          default=os.getenv("ANOND", "anond"),
+                          default=os.getenv("BITCOIND", "anond"),
                           help="anond binary to test")
         parser.add_option("--refbinary", dest="refbinary",
-                          default=os.getenv("ANOND", "anond"),
+                          default=os.getenv("BITCOIND", "anond"),
                           help="anond binary to use for reference nodes (if any)")
 
     def setup_chain(self):
