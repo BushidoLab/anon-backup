@@ -109,6 +109,18 @@ def initialize_chain(test_dir):
                 print "initialize_chain: anond started, calling anon-cli -rpcwait getblockcount"
             subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir,
                                     "-rpcwait", "getblockcount"], stdout=devnull)
+            
+            # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir,
+            #                         "-rpcwait", "mnsync next"], stdout=devnull)
+            # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir,
+            #                         "-rpcwait", "mnsync next"], stdout=devnull)
+            
+            # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir,
+            #                         "-rpcwait", "mnsync next"], stdout=devnull)
+            
+            # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir,
+            #                         "-rpcwait", "mnsync next"], stdout=devnull)
+
             if os.getenv("PYTHON_DEBUG", ""):
                 print "initialize_chain: anon-cli -rpcwait getblockcount completed"
         devnull.close()
@@ -195,6 +207,23 @@ def start_node(i, dirname, extra_args=None, rpchost=None, timewait=None, binary=
     subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
                           _rpchost_to_args(rpchost)  +
                           ["-rpcwait", "getblockcount"], stdout=devnull)
+    
+    subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
+                          _rpchost_to_args(rpchost)  +
+                          ["-rpcwait", "mnsync", "next"], stdout=devnull)
+    # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
+    #                       _rpchost_to_args(rpchost)  +
+    #                       ["-rpcwait", "mnsync", "next"], stdout=devnull)
+    # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
+    #                       _rpchost_to_args(rpchost)  +
+    #                       ["-rpcwait", "mnsync", "next"], stdout=devnull)
+    # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
+    #                       _rpchost_to_args(rpchost)  +
+    #                       ["-rpcwait", "mnsync", "next"], stdout=devnull)
+    # subprocess.check_call([ os.getenv("BITCOINCLI", "anon-cli"), "-datadir="+datadir] +
+    #                       _rpchost_to_args(rpchost)  +
+    #                       ["-rpcwait", "mnsync", "next"], stdout=devnull)
+
     if os.getenv("PYTHON_DEBUG", ""):
         print "start_node: calling anon-cli -rpcwait getblockcount returned"
     devnull.close()

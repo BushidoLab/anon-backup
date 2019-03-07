@@ -11,71 +11,71 @@ export BITCOIND=${REAL_BITCOIND}
 #Run the tests
 
 testScripts=(
-    # 'paymentdisclosure.py'
-    # 'prioritisetransaction.py' #broken
-    # 'wallet_treestate.py'
-    # 'wallet_protectcoinbase.py' 
-    # 'wallet_shieldcoinbase.py'
-    # 'wallet.py' 
-    # 'wallet_nullifiers.py'
-    # 'wallet_1941.py'
-    # 'wallet_grothtx.py'
-    # 'listtransactions.py' 
-    # 'mempool_resurrect_test.py' 
-    # 'txn_doublespend.py'  #broken
-    # 'txn_doublespend.py --mineblock' #broken
-    # 'getchaintips.py' 
-    # 'rawtransactions.py' 
-    # 'rest.py' 
-    # 'mempool_spendcoinbase.py'
-    # 'mempool_coinbase_spends.py' #broken
-    # 'mempool_tx_input_limit.py' #broken
-    # 'httpbasics.py' 
-    # 'zapwallettxes.py' 
-    # 'proxy_test.py' 
-    # 'merkle_blocks.py'
-    # 'fundrawtransaction.py' 
-    # 'signrawtransactions.py'
-    # 'walletbackup.py' 
-    # 'key_import_export.py'  
-    # 'nodehandling.py' 
-    # 'reindex.py' 
-    # 'decodescript.py'
-    # 'disablewallet.py' 
-    # 'zcjoinsplit.py'
-    'zcjoinsplitdoublespend.py'
-    # 'zkey_import_export.py'
-    # 'getblocktemplate.py'
-    # 'bip65-cltv-p2p.py' 
-    # 'bipdersig-p2p.py' 
-    #'p2p-masternodes.py'
+    'paymentdisclosure.py'
+    # 'prioritisetransaction.py'                #broken
+    'wallet_treestate.py'
+    'wallet_protectcoinbase.py' 
+    'wallet_shieldcoinbase.py'
+    'wallet.py' 
+    'wallet_nullifiers.py'
+    'wallet_1941.py'
+    'wallet_grothtx.py'
+    'listtransactions.py' 
+    'mempool_resurrect_test.py' 
+    # 'txn_doublespend.py'                      #broken
+    # 'txn_doublespend.py --mineblock'          #broken
+    'getchaintips.py' 
+    'rawtransactions.py' 
+    'rest.py' 
+    'mempool_spendcoinbase.py'
+    # 'mempool_coinbase_spends.py'              #broken
+    # 'mempool_tx_input_limit.py'               #broken
+    'httpbasics.py' 
+    'zapwallettxes.py' 
+    'proxy_test.py' 
+    'merkle_blocks.py'
+    'fundrawtransaction.py' 
+    'signrawtransactions.py'
+    'walletbackup.py' 
+    'key_import_export.py'  
+    'nodehandling.py' 
+    'reindex.py' 
+    'decodescript.py'
+    'disablewallet.py' 
+    'zcjoinsplit.py'
+    # 'zcjoinsplitdoublespend.py'               #broken
+    'zkey_import_export.py'
+    # 'getblocktemplate.py'                     #broken - due to masternode sync
+    # 'bip65-cltv-p2p.py'                       #broken - this test is meant to exercise BIP65 (CHECKLOCKTIMEVERIFY)
+    # 'bipdersig-p2p.py'                        #broken - this test is meant to exercise BIP66 (DER SIG)
+    # 'p2p-masternodes.py'                      #broken
 );
 testScriptsExt=(
     'getblocktemplate_longpoll.py'
     'getblocktemplate_proposals.py'
-    'pruning.py'
+    # 'pruning.py'                  # disabled for ANON. Failed because of the issue #1302 in zcash
     'forknotify.py'
-    'hardforkdetection.py'
-    'invalidateblock.py'
+    # 'hardforkdetection.py'        # disabled for ANON. Failed because of the issue #1302 in zcash
+    # 'invalidateblock.py'          # disabled for ANON. Failed because of the issue #1302 in zcash
     'keypool.py'
     'receivedby.py'
     'rpcbind_test.py'
-#   'script_test.py'
+    # 'script_test.py'              # requires create_block functionality that is not implemented for zcash blocks yet
     'smartfees.py'
     'maxblocksinflight.py'
-    'invalidblockrequest.py'
+    # 'invalidblockrequest.py'      # requires create_block functionality that is not implemented for zcash blocks yet
     'p2p-versionbits-warning.py'
-#    'forknotify.py'
-    'p2p-acceptblock.py'
+    # 'forknotify.py'
+    # 'p2p-acceptblock.py'          # requires create_block functionality that is not implemented for zcash blocks yet
 );
 
-if [ "x$ENABLE_ZMQ" = "x1" ]; then
-  testScripts+=('zmq_test.py')
-fi
+# if [ "x$ENABLE_ZMQ" = "x1" ]; then
+#   testScripts+=('zmq_test.py')
+# fi
 
-if [ "x$ENABLE_PROTON" = "x1" ]; then
-  testScripts+=('proton_test.py')
-fi
+# if [ "x$ENABLE_PROTON" = "x1" ]; then
+#   testScripts+=('proton_test.py')
+# fi
 
 extArg="-extended"
 passOn=${@#$extArg}

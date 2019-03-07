@@ -62,8 +62,8 @@ class Server(MessagingHandler):
 
 
 class ProtonTest (BitcoinTestFramework):
-
-    port = 25672
+    # port = 25672
+    port = 25683
     numblocks = 10  # must be even, as two nodes generate equal number
     assert(numblocks % 2 == 0)
 

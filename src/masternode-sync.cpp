@@ -185,7 +185,12 @@ std::string CMasternodeSync::GetAssetName()
 }
 
 void CMasternodeSync::SwitchToNextAsset()
-{
+{   
+     if(Params().NetworkIDString() == "regtest") {
+        nRequestedMasternodeAssets = MASTERNODE_SYNC_FINISHED;
+        return;
+        }
+        
     switch(nRequestedMasternodeAssets)
     {
         case(MASTERNODE_SYNC_FAILED):

@@ -398,14 +398,18 @@ public:
         strCurrencyUnits = "REG";
         consensus.fCoinbaseMustBeProtected = false;
         consensus.nSubsidySlowStartInterval = 0;
-        consensus.nSubsidyHalvingInterval = 2000;
+        consensus.nSubsidyHalvingInterval = 150;
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 1000;
         consensus.powLimit = uint256S("0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f");
+        consensus.nPowAveragingWindow = 17;
         consensus.prePowLimit = consensus.powLimit;
+
+        assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.nPowMaxAdjustDown = 0; // Turn off adjustment down
         consensus.nPowMaxAdjustUp = 0; // Turn off adjustment up
+        consensus.nPowTargetSpacing = 10 * 60;
 
         //masternode
         consensus.nMasternodeMinimumConfirmations = 1;
@@ -456,7 +460,7 @@ public:
         genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000014");
         genesis.nSolution = ParseHex("082db3be12af6517f20de6265d02f5c971010ee2e2d784c525b16c21185cce784c5ec38f");
         consensus.hashGenesisBlock = genesis.GetHash();
-        nDefaultPort = 3130;
+        nDefaultPort = 18344;
         assert(consensus.hashGenesisBlock == uint256S("0x0405af839b4b9e53bae1f951e76b0e0a33d1ca6901fc264893adb375cc04a410"));
         nPruneAfterHeight = 1000;
 
