@@ -68,7 +68,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
         
         // sprout burn
-        consensus.zResetHeight = 45000;
+        consensus.zResetHeight = 50000;
 
         consensus.nForkStartHeight = 3;
         consensus.nForkHeightRange = 16737;
