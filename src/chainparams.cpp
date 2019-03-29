@@ -432,7 +432,7 @@ public:
         consensus.nGovernanceFilterElements = 20000;
 
          // sprout burn
-        consensus.zResetHeight = 1;
+        consensus.zResetHeight = 200;
 
         // Setup airdrop blocks range
         nForkStartHeight = 0;

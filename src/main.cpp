@@ -1289,6 +1289,8 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransa
                                      REJECT_DUPLICATE, "bad-txns-inputs-spent");
 
         // are the joinsplit's requirements met?
+        LogPrintf("JoinSplit's requirements met - pindex->nHeight: %d \n", chainActive.Height());
+            LogPrintf("JoinSplit's requirements met - zResetHeight: %d \n", Params().GetConsensus().zResetHeight);
         if (!view.HaveJoinSplitRequirements(tx, chainActive.Height() >= Params().GetConsensus().zResetHeight))
             return state.Invalid(error("AcceptToMemoryPool: joinsplit requirements not met"),
                                  REJECT_DUPLICATE, "bad-txns-joinsplit-requirements-not-met");
@@ -2565,6 +2567,8 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                                  REJECT_INVALID, "bad-txns-inputs-missingorspent");
 
             // are the JoinSplit's requirements met?
+            LogPrintf("JoinSplit's requirements met - pindex->nHeight: %d \n", pindex->nHeight);
+            LogPrintf("JoinSplit's requirements met - zResetHeight: %d \n", chainparams.GetConsensus().zResetHeight);
             if (!view.HaveJoinSplitRequirements(tx, pindex->nHeight > chainparams.GetConsensus().zResetHeight))
                 return state.DoS(100, error("ConnectBlock(): JoinSplit requirements not met"),
                                  REJECT_INVALID, "bad-txns-joinsplit-requirements-not-met");
@@ -3054,7 +3058,7 @@ bool static ConnectTip(CValidationState& state, CBlockIndex* pindexNew, CBlock* 
     }
     // Get the current commitment tree
     ZCIncrementalMerkleTree oldTree;
-    assert(pcoinsTip->GetAnchorAt(pcoinsTip->GetBestAnchor(), oldTree, chainActive.Height() >= Params().GetConsensus().zResetHeight));
+    assert(pcoinsTip->GetAnchorAt(pcoinsTip->GetBestAnchor(), oldTree, false));
     // Apply the block atomically to the chain state.
     int64_t nTime2 = GetTimeMicros();
     nTimeReadFromDisk += nTime2 - nTime1;

@@ -1821,6 +1821,7 @@ int CWallet::ScanForWalletTransactions(CBlockIndex* pindexStart, bool fUpdate)
             ZCIncrementalMerkleTree tree;
             // This should never fail: we should always be able to get the tree
             // state on the path to the tip of our chain
+            LogPrintf("pindex->nHeight: %d", pindex->nHeight);
             assert(pcoinsTip->GetAnchorAt(pindex->hashAnchor, tree, pindex->nHeight > chainParams.GetConsensus().zResetHeight));
             // Increment note witness caches
             IncrementNoteWitnesses(pindex, &block, tree);

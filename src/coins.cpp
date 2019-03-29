@@ -109,16 +109,21 @@ CCoinsMap::const_iterator CCoinsViewCache::FetchCoins(const uint256 &txid) const
 bool CCoinsViewCache::GetAnchorAt(const uint256 &rt, ZCIncrementalMerkleTree &tree, const bool postBurn) const {
     CAnchorsMap::const_iterator it = cacheAnchors.find(rt);
     if (it != cacheAnchors.end()) {
+        LogPrintf("it->second.entered: %d\n", it->second.entered);
         if (it->second.entered) {
             tree = it->second.tree;
+            LogPrintf("postBurn: %d\n", postBurn);
+            LogPrintf("it->second.postBurn: %d\n", it->second.postBurn);
             return (!postBurn || it->second.postBurn);
         } else {
+            LogPrintf("1\n");
             return false;
         }
     }
 
     if (!base->GetAnchorAt(rt, tree, postBurn)) {
-        return false;
+        LogPrintf("2\n");
+        return true;
     }
 
     CAnchorsMap::iterator ret = cacheAnchors.insert(std::make_pair(rt, CAnchorsCacheEntry())).first;
