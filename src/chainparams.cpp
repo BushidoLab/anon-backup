@@ -254,7 +254,7 @@ public:
         consensus.nGovernanceFilterElements = 20000;
 
         // sprout burn
-        consensus.zResetHeight = 3000;
+        consensus.zResetHeight = 100;
 
         consensus.prePowLimit = consensus.powLimit;
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
