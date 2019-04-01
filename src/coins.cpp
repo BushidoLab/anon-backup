@@ -123,7 +123,9 @@ bool CCoinsViewCache::GetAnchorAt(const uint256 &rt, ZCIncrementalMerkleTree &tr
 
     if (!base->GetAnchorAt(rt, tree, postBurn)) {
         LogPrintf("2\n");
-        return true;
+        if(postBurn)
+            return true;
+        return false;
     }
 
     CAnchorsMap::iterator ret = cacheAnchors.insert(std::make_pair(rt, CAnchorsCacheEntry())).first;
