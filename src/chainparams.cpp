@@ -291,8 +291,8 @@ public:
         
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
-        eh_epoch_1_endblock = nForkStartHeight + nForkHeightRange; //actual block 3
-        eh_epoch_2_startblock = nForkStartHeight + nForkHeightRange + 1; //actual block 4
+        eh_epoch_1_endblock = 17; //actual block 3
+        eh_epoch_2_startblock = 17 + 1; //actual block 4
 
         
 
