@@ -254,7 +254,7 @@ public:
         consensus.nGovernanceFilterElements = 20000;
 
         // sprout burn
-        consensus.zResetHeight = 100;
+        consensus.zResetHeight = 50;
 
         consensus.prePowLimit = consensus.powLimit;
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
@@ -287,7 +287,7 @@ public:
         masternodeCollateralNew = 10000;
 
         //Sapling
-        saplingActivationBlock = 100; 
+        saplingActivationBlock = 50; 
         
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
