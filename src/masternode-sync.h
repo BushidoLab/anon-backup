@@ -24,7 +24,7 @@ static const int MASTERNODE_SYNC_TICK_SECONDS = 6;
 static const int MASTERNODE_SYNC_TIMEOUT_SECONDS = 120; // our blocks are 10 minutes so 120 seconds should be fine
 
 // TEMPORARY WORKAROUND
-static const int MASTERNODE_SYNC_ENOUGH_PEERS = 3;
+static const int MASTERNODE_SYNC_ENOUGH_PEERS = 0;
 
 extern CMasternodeSync masternodeSync;
 
