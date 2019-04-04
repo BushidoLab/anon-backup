@@ -40,7 +40,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
         return nProofOfWorkLimit;
 
     // FOR TESTING ONLY
-    if (nHeight == 46381)
+    if (nHeight == 46381 || nHeight >= 46384 )
         return nProofOfWorkLimit;
 
     // right at fork
